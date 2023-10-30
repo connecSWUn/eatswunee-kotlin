@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAF9F7">
+
+    <Button
+        android:id="@+id/button_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#00ff0000"
+        android:text="취소"
+        android:textColor="#45210D"
+        android:textSize="18sp"
+        android:textStyle="normal|bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.026" />
+
+    <Button
+        android:id="@+id/button_done"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#00ff0000"
+        android:text="완료"
+        android:textColor="#D75509"
+        android:textSize="18sp"
+        android:textStyle="normal|bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.026" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="411dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="95dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:orientation="horizontal"
+            android:paddingLeft="22dp"
+            android:paddingRight="22dp">
+
+            <TextView
+                android:id="@+id/textView_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="5dp"
+                android:text="제목:"
+                android:textColor="#45210D"
+                android:textSize="15sp" />
+
+            <EditText
+                android:id="@+id/editText_title"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/profile_stroke_background"
+                android:ems="10"
+                android:hint="제목을 입력하세요"
+                android:inputType="text"
+                android:paddingLeft="10dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:text=""
+                android:textColorHint="#808E3B0B"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingLeft="22dp"
+            android:paddingRight="22dp">
+
+            <TextView
+                android:id="@+id/textView_place"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="5dp"
+                android:text="장소:"
+                android:textColor="#45210D"
+                android:textSize="15sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/profile_stroke_background"
+                android:orientation="vertical">
+
+                <Spinner
+                    android:id="@+id/spinner_spot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/spinner_array_place"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
+                android:paddingRight="5dp"
+                android:text="시간대 :"
+                android:textColor="#45210D"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/start_time"
+                android:layout_width="70dp"
+                android:layout_height="30dp"
+                android:background="@drawable/profile_stroke_background"
+                android:drawableLeft="@drawable/baseline_access_time_24"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="선택"
+                android:textColor="#808E3B0B"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/textView_time2"
+                android:layout_width="wrap_content"
+                android:layout_height="47dp"
+                android:gravity="center"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:text="~"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/end_time"
+                android:layout_width="70dp"
+                android:layout_height="30dp"
+                android:background="@drawable/profile_stroke_background"
+                android:drawableLeft="@drawable/baseline_access_time_24"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="선택"
+                android:textColor="#808E3B0B"
+                android:textStyle="normal" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/write_content"
+        android:layout_width="0dp"
+        android:layout_height="370dp"
+        android:layout_margin="23dp"
+        android:background="@drawable/profile_stroke_background"
+        android:ems="10"
+        android:gravity="top"
+        android:hint="내용을 입력해 주세요"
+        android:inputType="textMultiLine"
+        android:padding="15dp"
+        android:textColorHint="#808E3B0B"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

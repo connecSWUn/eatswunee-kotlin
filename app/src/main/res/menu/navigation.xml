@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/item_community"
+        android:enabled="true"
+        android:icon="@drawable/community"
+        android:title="밥 친구 찾기" />
+    <item
+        android:id="@+id/item_cafeteria"
+        android:enabled="true"
+        android:icon="@drawable/cafeteria"
+        android:title="구시아" />
+    <item
+        android:id="@+id/item_mypage"
+        android:enabled="true"
+        android:icon="@drawable/mypage"
+        android:title="마이페이지" />
+</menu>
