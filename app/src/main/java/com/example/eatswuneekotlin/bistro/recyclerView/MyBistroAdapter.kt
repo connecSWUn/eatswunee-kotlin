@@ -14,7 +14,8 @@ import com.example.eatswuneekotlin.R
 import com.example.eatswuneekotlin.bistro.menu_infoActivity
 import com.example.eatswuneekotlin.community.ServiceItemClickListener
 import com.example.eatswuneekotlin.server.menus
-import java.net.HttpURLConnection
+import java.io.IOException
+import java.net.MalformedURLException
 import java.net.URL
 
 class MyBistroAdapter(private val menusList: List<menus>) :
@@ -28,13 +29,15 @@ class MyBistroAdapter(private val menusList: List<menus>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = menusList[position]
         holder.setItem(item)
-        holder.serviceItemClickListener = ServiceItemClickListener { v, position ->
-            val menuId = menusList[position].menuId
-            val menuImage = menusList[position].menuImg
-            val intent = Intent(v.context, menu_infoActivity::class.java)
-            intent.putExtra("menuId", menuId)
-            intent.putExtra("menuImage", menuImage)
-            v.context.startActivity(intent)
+        holder.serviceItemClickListener = object : ServiceItemClickListener {
+            override fun onItemClickListener(v: View, position: Int) {
+                val menuId = menusList[position].menuId
+                val menuImage = menusList[position].menuImg
+                val intent = Intent(v.context, menu_infoActivity::class.java)
+                intent.putExtra("menuId", menuId)
+                intent.putExtra("menuImage", menuImage)
+                v.context.startActivity(intent)
+            }
         }
     }
 
@@ -65,34 +68,36 @@ class MyBistroAdapter(private val menusList: List<menus>) :
             menu_avg_rating.text = menus.menuRating.toString()
             menu_name.text = menus.menuName
             menu_price.text = menus.menuPrice
-            ImageLoadTask(menus.menuImg, menu_image).execute()
+            DownloadFilesTask().execute(menus.menuImg)
         }
 
         override fun onClick(v: View) {
             serviceItemClickListener!!.onItemClickListener(v, layoutPosition)
         }
-    }
 
-    inner class ImageLoadTask(private val url: String, private val imageView: ImageView) :
-        AsyncTask<Void?, Void?, Bitmap?>() {
-        protected override fun doInBackground(vararg params: Void): Bitmap? {
-            try {
-                val urlConnection = URL(url)
-                val connection = urlConnection
-                    .openConnection() as HttpURLConnection
-                connection.doInput = true
-                connection.connect()
-                val input = connection.inputStream
-                return BitmapFactory.decodeStream(input)
-            } catch (e: Exception) {
-                e.printStackTrace()
+        internal inner class DownloadFilesTask : AsyncTask<String?, Void?, Bitmap?>() {
+            override fun doInBackground(vararg strings: String?): Bitmap? {
+                var bmp: Bitmap? = null
+                try {
+                    val img_url = strings[0] //url of the image
+                    val url = URL(img_url)
+                    bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+                } catch (e: MalformedURLException) {
+                    e.printStackTrace()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+                return bmp
             }
-            return null
-        }
 
-        override fun onPostExecute(result: Bitmap?) {
-            super.onPostExecute(result)
-            imageView.setImageBitmap(result)
+            override fun onPreExecute() {
+                super.onPreExecute()
+            }
+
+            override fun onPostExecute(result: Bitmap?) {
+                menu_image!!.setImageBitmap(result)
+            }
         }
     }
+
 }

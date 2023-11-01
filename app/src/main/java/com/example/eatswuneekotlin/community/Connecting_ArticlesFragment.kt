@@ -10,22 +10,25 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
+import com.example.eatswuneekotlin.MainActivity
+import com.example.eatswuneekotlin.MasterApplication
 import com.example.eatswuneekotlin.R
 import com.example.eatswuneekotlin.server.Result
-import com.example.eatswuneekotlin.server.RetrofitClient
-import com.example.eatswuneekotlin.server.ServiceApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class connecting_articlesFragment : Fragment() {
-    private var v: View? = null
-    private var mRecyclerView: RecyclerView? = null
-    private var adapter: MyArticlesAdapter? = null
-    private var retrofitClient: RetrofitClient? = null
-    private var serviceApi: ServiceApi? = null
+class Connecting_ArticlesFragment : Fragment() {
+    private lateinit var v: View
+    private lateinit var mRecyclerView: RecyclerView
+    private lateinit var adapter: MyArticlesAdapter
+
+    private lateinit var activity: MainActivity
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        activity = context as MainActivity
     }
 
     override fun onCreateView(
@@ -36,9 +39,11 @@ class connecting_articlesFragment : Fragment() {
         mRecyclerView = v.findViewById(R.id.finding_RecyclerView)
         mRecyclerView.addItemDecoration(RecyclerViewDecoration(20))
 
-        /* initiate recyclerView */mRecyclerView.setLayoutManager(LinearLayoutManager(context))
-        mRecyclerView.setLayoutManager(LinearLayoutManager(context, RecyclerView.VERTICAL, false))
+        /* initiate recyclerView */
+        mRecyclerView.layoutManager = LinearLayoutManager(context)
+        mRecyclerView.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         init("CONNECTING")
+
         return v
     }
 
@@ -55,14 +60,20 @@ class connecting_articlesFragment : Fragment() {
     }
 
     private fun init(category: String) {
-        retrofitClient = RetrofitClient.instance
-        serviceApi = RetrofitClient.serviceApi
-        serviceApi.getArticles(category).enqueue(object : Callback<Result?> {
+        val masterApp = MasterApplication()
+        masterApp.createRetrofit(activity)
+
+        val service = masterApp.serviceApi
+
+        service.getArticles(category)?.enqueue(object : Callback<Result?> {
             override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
                 val result = response.body()
                 val data = result!!.data
+
                 Log.d("retrofit", "Data fetch success")
-                /* initiate adapter */adapter = MyArticlesAdapter(data.postsList)
+
+                /* initiate adapter */
+                adapter = MyArticlesAdapter(data?.postsList!!)
                 mRecyclerView!!.adapter = adapter
             }
 

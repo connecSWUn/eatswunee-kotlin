@@ -12,10 +12,9 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.example.eatswuneekotlin.MasterApplication
 import com.example.eatswuneekotlin.R
 import com.example.eatswuneekotlin.server.Result
-import com.example.eatswuneekotlin.server.RetrofitClient
-import com.example.eatswuneekotlin.server.ServiceApi
 import com.example.eatswuneekotlin.server.chat.ChatActivity
 import com.example.eatswuneekotlin.server.chat.ChatListActivity
 import retrofit2.Call
@@ -25,36 +24,41 @@ import java.io.IOException
 import java.net.MalformedURLException
 import java.net.URL
 
-class friend_viewActivity : AppCompatActivity() {
-    private var retrofitClient: RetrofitClient? = null
-    private var serviceApi: ServiceApi? = null
+class Friend_ViewActivity : AppCompatActivity() {
     var isWriter = false
     private var postId: Long = 0
-    private var user_id: String? = null
-    var title: TextView? = null
-    var spot: TextView? = null
-    var time: TextView? = null
-    var created_at: TextView? = null
-    var status: TextView? = null
-    var name: TextView? = null
-    var content: TextView? = null
-    var background: LinearLayout? = null
-    var inside: LinearLayout? = null
-    var profile: ImageView? = null
-    var chat_btn: Button? = null
-    var chat_list_btn: Button? = null
+    private lateinit var user_id: String
+
+    private lateinit var title: TextView
+    private lateinit var spot: TextView
+    private lateinit var time: TextView
+    private lateinit var created_at: TextView
+    private lateinit var status: TextView
+    private lateinit var name: TextView
+    private lateinit var content: TextView
+
+    private lateinit var background: LinearLayout
+    private lateinit var inside: LinearLayout
+    private lateinit var profile: ImageView
+    private lateinit var chat_btn: Button
+    private lateinit var chat_list_btn: Button
+
+    val masterApp = MasterApplication()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friend_view)
-        retrofitClient = RetrofitClient.instance
-        serviceApi = RetrofitClient.serviceApi
+
         val toolbar = findViewById<View>(R.id.friend_view_toolbar) as Toolbar
         setSupportActionBar(toolbar)
+
         val actionBar = supportActionBar
         actionBar!!.setDisplayShowTitleEnabled(false)
         actionBar.setDisplayShowCustomEnabled(true)
         actionBar.setDisplayHomeAsUpEnabled(true)
         actionBar.setHomeAsUpIndicator(R.drawable.baseline_arrow_back_ios_new_24)
+
+
         title = findViewById(R.id.view_title)
         spot = findViewById(R.id.view_spot)
         time = findViewById(R.id.view_time)
@@ -63,64 +67,83 @@ class friend_viewActivity : AppCompatActivity() {
         name = findViewById(R.id.view_name)
         content = findViewById(R.id.view_content)
         profile = findViewById(R.id.view_profile)
+
         chat_btn = findViewById(R.id.chat_btn)
+        chat_btn.setOnClickListener(chatOnClickListener())
         chat_list_btn = findViewById(R.id.chat_list_btn)
+
         background = findViewById(R.id.friend_view_bottom_back)
         inside = findViewById(R.id.friend_view_bottom_in)
-        chat_btn.setOnClickListener(chatOnClickListener())
+
         val intent = intent
         postId = intent.extras!!.getLong("recruitId")
 
-        serviceApi!!.profile.enqueue(object : Callback<Result?> {
+        masterApp.createRetrofit(this@Friend_ViewActivity)
+        val service = masterApp.serviceApi
+
+        service!!.profile.enqueue(object : Callback<Result?> {
             override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
                 val result = response.body()
                 val data = result!!.data
-                user_id = data.user_id
+                user_id = data?.user_id!!
             }
 
             override fun onFailure(call: Call<Result?>, t: Throwable) {}
         })
+
         init(postId)
         chat_list_btn.setOnClickListener(chatListOnClickListener())
     }
 
     private fun init(postId: Long) {
-        serviceApi!!.getData("recruit", postId).enqueue(object : Callback<Result?> {
+        val service = masterApp.serviceApi
+
+        service!!.getData("recruit", postId)?.enqueue(object : Callback<Result?> {
             override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
                 val result = response.body()
                 val data = result!!.data
+
                 Log.d("retrofit", "Data fetch success")
-                val user_is_writer = data.isUser_is_writer
-                if (user_is_writer) {
+
+                val user_is_writer = data?.isUser_is_writer
+                if (user_is_writer == true) {
                     chat_list_btn!!.visibility = View.VISIBLE
                     background!!.visibility = View.GONE
                     invalidateOptionsMenu()
                 }
-                title!!.text = data.title
-                spot!!.text = data.spot
-                time!!.text = data.start_time + " - " + data.end_time
-                created_at!!.text = data.created_at
-                content!!.text = data.content
-                name!!.text = data.writers.user_name
-                if (data.recruit_status === "ONGOING") {
+
+                title!!.text = data?.title
+                spot!!.text = data?.spot
+                time!!.text = data?.start_time + " - " + data?.end_time
+                created_at!!.text = data?.created_at
+                content!!.text = data?.content
+                name!!.text = data?.writers?.user_name
+
+                if (data?.recruit_status === "ONGOING") {
+
                     status!!.text = "찾는 중이군요!"
                     status!!.setBackgroundResource(R.drawable.com_finding_chat_theme)
                     background!!.setBackgroundColor(resources.getColor(R.color.finding))
                     inside!!.setBackgroundResource(R.drawable.com_finding_theme_bottom_s)
-                } else if (data.recruit_status === "CONNECTING") {
+
+                } else if (data?.recruit_status === "CONNECTING") {
+
                     status!!.text = "연락 중이군요!"
                     status!!.setBackgroundResource(R.drawable.com_talking_chat_theme)
                     background!!.setBackgroundColor(resources.getColor(R.color.talking))
                     inside!!.setBackgroundResource(R.drawable.com_talking_theme_bottom_s)
-                } else if (data.recruit_status === "COMPLETED") {
+
+                } else if (data?.recruit_status === "COMPLETED") {
+
                     status!!.text = "이미 구했군요!"
                     status!!.setBackgroundResource(R.drawable.com_done_chat_theme)
                     background!!.setBackgroundColor(resources.getColor(R.color.done))
                     inside!!.setBackgroundResource(R.drawable.com_done_theme_bottom_s)
+
                 }
 
                 // 이미지 주소가 안 되어있음 : 수정 필요
-                DownloadFilesTask().execute(data.writers.user_profile_url)
+                DownloadFilesTask().execute(data?.writers?.user_profile_url)
             }
 
             override fun onFailure(call: Call<Result?>, t: Throwable) {
@@ -144,7 +167,7 @@ class friend_viewActivity : AppCompatActivity() {
                 return true
             }
             R.id.edit -> {
-                val intent = Intent(this@friend_viewActivity, friend_writeActivity::class.java)
+                val intent = Intent(this@Friend_ViewActivity, Friend_WriteActivity::class.java)
                 intent.putExtra("edit", true)
                 intent.putExtra("postId", postId)
                 startActivity(intent)
@@ -152,10 +175,12 @@ class friend_viewActivity : AppCompatActivity() {
             }
             R.id.delete -> {
                 // 게시글 삭제
-                serviceApi!!.postDelete(postId).enqueue(object : Callback<Result?> {
+                val service = masterApp.serviceApi
+
+                service!!.postDelete(postId)?.enqueue(object : Callback<Result?> {
                     override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
                         if (response.isSuccessful) {
-                            Toast.makeText(this@friend_viewActivity, "삭제되었습니다.", Toast.LENGTH_SHORT)
+                            Toast.makeText(this@Friend_ViewActivity, "삭제되었습니다.", Toast.LENGTH_SHORT)
                                 .show()
                             finish()
                         }
@@ -165,6 +190,7 @@ class friend_viewActivity : AppCompatActivity() {
                         t.printStackTrace()
                     }
                 })
+
                 return true
             }
         }
@@ -172,7 +198,7 @@ class friend_viewActivity : AppCompatActivity() {
     }
 
     internal inner class DownloadFilesTask : AsyncTask<String?, Void?, Bitmap?>() {
-        protected override fun doInBackground(vararg strings: String): Bitmap? {
+        override fun doInBackground(vararg strings: String?): Bitmap? {
             var bmp: Bitmap? = null
             try {
                 val img_url = strings[0] //url of the image
@@ -198,34 +224,42 @@ class friend_viewActivity : AppCompatActivity() {
 
     private inner class chatOnClickListener : View.OnClickListener {
         override fun onClick(view: View) {
-            serviceApi!!.getExist(postId).enqueue(object : Callback<Result?> {
+            val service = masterApp.serviceApi
+
+            service!!.getExist(postId)?.enqueue(object : Callback<Result?> {
                 override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
                     val result = response.body()
                     val data = result!!.data
-                    if (data.isExist_chatroom == true) {
-                        val intent = Intent(this@friend_viewActivity, ChatActivity::class.java)
-                        intent.putExtra(
-                            "chatRoomId",
-                            java.lang.Long.valueOf(user_id + "0" + postId)
-                        )
-                        startActivity(intent)
-                    } else if (data.isExist_chatroom == false) {
-                        serviceApi!!.makeChat(postId).enqueue(object : Callback<Result?> {
-                            override fun onResponse(
-                                call: Call<Result?>,
-                                response: Response<Result?>
-                            ) {
-                                val result = response.body()
-                                val data = result!!.data
-                                val chat_id = data.chat_room_id
-                                val intent =
-                                    Intent(this@friend_viewActivity, ChatActivity::class.java)
-                                intent.putExtra("chatRoomId", chat_id)
-                                startActivity(intent)
-                            }
+                    if (data != null) {
+                        if (data.isExist_chatroom) {
 
-                            override fun onFailure(call: Call<Result?>, t: Throwable) {}
-                        })
+                            val intent = Intent(this@Friend_ViewActivity, ChatActivity::class.java)
+                            intent.putExtra(
+                                "chatRoomId",
+                                java.lang.Long.valueOf(user_id + "0" + postId)
+                            )
+                            startActivity(intent)
+
+                        } else {
+
+                            service!!.makeChat(postId)?.enqueue(object : Callback<Result?> {
+                                override fun onResponse(
+                                    call: Call<Result?>,
+                                    response: Response<Result?>
+                                ) {
+                                    val result = response.body()
+                                    val data = result!!.data
+                                    val chat_id = data?.chat_room_id
+                                    val intent =
+                                        Intent(this@Friend_ViewActivity, ChatActivity::class.java)
+                                    intent.putExtra("chatRoomId", chat_id)
+                                    startActivity(intent)
+                                }
+
+                                override fun onFailure(call: Call<Result?>, t: Throwable) {}
+                            })
+
+                        }
                     }
                 }
 
@@ -236,7 +270,7 @@ class friend_viewActivity : AppCompatActivity() {
 
     private inner class chatListOnClickListener : View.OnClickListener {
         override fun onClick(view: View) {
-            val intent = Intent(this@friend_viewActivity, ChatListActivity::class.java)
+            val intent = Intent(this@Friend_ViewActivity, ChatListActivity::class.java)
             startActivity(intent)
         }
     }

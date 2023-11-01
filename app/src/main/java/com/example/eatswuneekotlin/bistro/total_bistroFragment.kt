@@ -9,26 +9,29 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.example.eatswuneekotlin.MainActivity
+import com.example.eatswuneekotlin.MasterApplication
 import com.example.eatswuneekotlin.R
 import com.example.eatswuneekotlin.bistro.recyclerView.MyBistroAdapter
 import com.example.eatswuneekotlin.bistro.recyclerView.MyViewPagerAdapter
 import com.example.eatswuneekotlin.server.Result
-import com.example.eatswuneekotlin.server.RetrofitClient
-import com.example.eatswuneekotlin.server.ServiceApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class total_bistroFragment : Fragment() {
-    private var v: View? = null
-    private var mRecyclerView: RecyclerView? = null
-    private var bistroAdapter: MyBistroAdapter? = null
-    private var viewPagerAdapter: MyViewPagerAdapter? = null
-    private var viewPager: ViewPager2? = null
-    private var retrofitClient: RetrofitClient? = null
-    private var serviceApi: ServiceApi? = null
+    private lateinit var v: View
+    private lateinit var mRecyclerView: RecyclerView
+    private lateinit var bistroAdapter: MyBistroAdapter
+    private lateinit var viewPagerAdapter: MyViewPagerAdapter
+    private lateinit var viewPager: ViewPager2
+
+    private lateinit var activity: MainActivity
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        activity = context as MainActivity
     }
 
     @SuppressLint("MissingInflatedId")
@@ -38,29 +41,39 @@ class total_bistroFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_total_bistro, container, false)
-        retrofitClient = RetrofitClient.instance
-        serviceApi = RetrofitClient.serviceApi
         init(0)
+
         mRecyclerView = v.findViewById(R.id.total_RecyclerView)
         viewPager = v.findViewById(R.id.view_pager)
+
         val gridLayoutManager = GridLayoutManager(activity, 2)
-        mRecyclerView.setLayoutManager(gridLayoutManager)
+        mRecyclerView.layoutManager = gridLayoutManager
+
         return v
     }
 
     private fun init(restaurantId: Long) {
-        serviceApi!!.getData("gusia", restaurantId).enqueue(object : Callback<Result?> {
+        val masterApp = MasterApplication()
+        masterApp.createRetrofit(activity)
+
+        val service = masterApp.serviceApi
+
+        service!!.getData("gusia", restaurantId)?.enqueue(object : Callback<Result?> {
             override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
                 val result = response.body()
                 val data = result!!.data
-                if (data.homeOrdersList == null) {
+
+                if (data?.homeOrdersList == null) {
                     viewPager!!.visibility = View.GONE
                 } else {
-                    viewPagerAdapter = MyViewPagerAdapter(data.homeOrdersList)
+
+                    viewPagerAdapter = MyViewPagerAdapter(data?.homeOrdersList!!)
                     viewPager!!.adapter = viewPagerAdapter
                     viewPager!!.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+
                 }
-                bistroAdapter = MyBistroAdapter(data.menusList)
+
+                bistroAdapter = MyBistroAdapter(data?.menusList!!)
                 mRecyclerView!!.adapter = bistroAdapter
             }
 

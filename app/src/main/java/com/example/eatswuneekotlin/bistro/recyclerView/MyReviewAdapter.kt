@@ -12,7 +12,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eatswuneekotlin.R
 import com.example.eatswuneekotlin.server.reviews
-import java.net.HttpURLConnection
+import java.io.IOException
+import java.net.MalformedURLException
 import java.net.URL
 
 class MyReviewAdapter(private val reviewsList: List<reviews>) :
@@ -50,35 +51,36 @@ class MyReviewAdapter(private val reviewsList: List<reviews>) :
         }
 
         fun setItem(reviews: reviews) {
-            name.text = reviews.writer.name
+            name.text = reviews.writer?.name
             context.text = reviews.reviewContent
             date.text = reviews.createdAt
             star_rate.rating = reviews.menuRating.toFloat()
-            ImageLoadTask(reviews.writer.profileUrl, profile).execute()
-            ImageLoadTask(reviews.reviewImgsList[0], review_photo).execute()
+            DownloadFilesTask().execute(reviews.writer?.profileUrl)
+            DownloadFilesTask().execute(reviews.reviewImgsList?.get(0))
         }
-    }
 
-    inner class ImageLoadTask(private val url: String, private val imageView: ImageView) :
-        AsyncTask<Void?, Void?, Bitmap?>() {
-        protected override fun doInBackground(vararg params: Void): Bitmap? {
-            try {
-                val urlConnection = URL(url)
-                val connection = urlConnection
-                    .openConnection() as HttpURLConnection
-                connection.doInput = true
-                connection.connect()
-                val input = connection.inputStream
-                return BitmapFactory.decodeStream(input)
-            } catch (e: Exception) {
-                e.printStackTrace()
+        internal inner class DownloadFilesTask : AsyncTask<String?, Void?, Bitmap?>() {
+            override fun doInBackground(vararg strings: String?): Bitmap? {
+                var bmp: Bitmap? = null
+                try {
+                    val img_url = strings[0] //url of the image
+                    val url = URL(img_url)
+                    bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+                } catch (e: MalformedURLException) {
+                    e.printStackTrace()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+                return bmp
             }
-            return null
-        }
 
-        override fun onPostExecute(result: Bitmap?) {
-            super.onPostExecute(result)
-            imageView.setImageBitmap(result)
+            override fun onPreExecute() {
+                super.onPreExecute()
+            }
+
+            override fun onPostExecute(result: Bitmap?) {
+                profile!!.setImageBitmap(result)
+            }
         }
     }
 }

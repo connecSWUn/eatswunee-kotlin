@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.eatswuneekotlin.bistro.order_waitingActivity
+import com.example.eatswuneekotlin.bistro.Order_WaitingActivity
 import com.example.eatswuneekotlin.server.Result
 import com.example.eatswuneekotlin.server.sqlite.DBManager
 import com.example.eatswuneekotlin.server.sqlite.shop_bag
@@ -106,7 +106,7 @@ class ShopBagActivity : AppCompatActivity() {
                 }
 
                 dbManager!!.deleteAllData()
-                val intent = Intent(this@ShopBagActivity, order_waitingActivity::class.java)
+                val intent = Intent(this@ShopBagActivity, Order_WaitingActivity::class.java)
                 startActivity(intent)
                 finish()
             }

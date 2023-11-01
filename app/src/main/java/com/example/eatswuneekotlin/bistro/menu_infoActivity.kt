@@ -9,6 +9,7 @@ import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.example.eatswuneekotlin.MasterApplication
 import com.example.eatswuneekotlin.R
 import com.example.eatswuneekotlin.server.Result
 import com.example.eatswuneekotlin.server.RetrofitClient
@@ -18,29 +19,35 @@ import com.example.eatswuneekotlin.ShopBagActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
 import java.net.HttpURLConnection
+import java.net.MalformedURLException
 import java.net.URL
 
 class menu_infoActivity : AppCompatActivity() {
-    private var retrofitClient: RetrofitClient? = null
-    private var serviceApi: ServiceApi? = null
-    var RestaurantName: TextView? = null
-    var menuName: TextView? = null
-    var menuRating: TextView? = null
-    var menuPrice: TextView? = null
-    var menuCnt: TextView? = null
-    var putBtn: Button? = null
-    var reviewBtn: Button? = null
-    var cnt_plus: Button? = null
-    var cnt_minus: Button? = null
-    var menuImage: ImageView? = null
+    private lateinit var RestaurantName: TextView
+    private lateinit var menuName: TextView
+    private lateinit var menuRating: TextView
+    private lateinit var menuPrice: TextView
+    private lateinit var menuCnt: TextView
+
+    private lateinit var putBtn: Button
+    private lateinit var reviewBtn: Button
+    private lateinit var cnt_plus: Button
+    private lateinit var cnt_minus: Button
+    private lateinit var menuImage: ImageView
+
     var menuId: Long = 0
-    var menu_image: String? = null
+    private lateinit var menu_image: String
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu_info)
+
         val toolbar = findViewById<View>(R.id.menu_info_toolbar) as Toolbar
         setSupportActionBar(toolbar)
+
         val actionBar = supportActionBar
         actionBar!!.setDisplayShowTitleEnabled(false)
         actionBar.setDisplayShowCustomEnabled(true)
@@ -63,72 +70,83 @@ class menu_infoActivity : AppCompatActivity() {
         // 수량 변경 버튼
         cnt_plus = findViewById(R.id.plusBtn)
         cnt_minus = findViewById(R.id.minBtn)
+
         val intent = intent
         menuId = intent.extras!!.getLong("menuId")
-        menu_image = intent.extras!!.getString("menuImage")
+        menu_image = intent.extras!!.getString("menuImage").toString()
         init(menuId)
 
         reviewBtn.setOnClickListener(reviewOnClickListener())
         putBtn.setOnClickListener(putOnClickListener())
+
         cnt_plus.setOnClickListener(View.OnClickListener {
-            val cnt: Int = menuCnt.getText() as kotlin.String?. toInt ()
-            val price: Int = menuPrice.getText() as kotlin.String?. toInt ()
-            menuCnt.setText((cnt + 1).toString())
-            putBtn.setText((price * (cnt + 1)).toString() + " 원 담기")
+            val cnt: Int = menuCnt.text.toString().toInt()
+            val price: Int = menuPrice.text.toString().toInt()
+
+            menuCnt.text = (cnt + 1).toString()
+            putBtn.text = (price * (cnt + 1)).toString() + " 원 담기"
         })
+
         cnt_minus.setOnClickListener(View.OnClickListener {
-            val cnt: Int = menuCnt.getText() as kotlin.String?. toInt ()
-            val price: Int = menuPrice.getText() as kotlin.String?. toInt ()
+            val cnt: Int = menuCnt.text.toString().toInt()
+            val price: Int = menuPrice.text.toString().toInt()
+
             if (cnt == 1) Toast.makeText(this@menu_infoActivity, "최소 수량입니다.", Toast.LENGTH_SHORT)
                 .show() else {
-                menuCnt.setText((cnt - 1).toString())
-                putBtn.setText((price * (cnt - 1)).toString() + " 원 담기")
+                menuCnt.text = (cnt - 1).toString()
+                putBtn.text = (price * (cnt - 1)).toString() + " 원 담기"
             }
         })
+
     }
 
     private fun init(menuId: Long) {
-        retrofitClient = RetrofitClient.instance
-        serviceApi = RetrofitClient.serviceApi
-        serviceApi.getData(menuId).enqueue(object : Callback<Result?> {
+        val masterApp = MasterApplication()
+        masterApp.createRetrofit(this@menu_infoActivity)
+
+        val service = masterApp.serviceApi
+
+        service.getData(menuId)?.enqueue(object : Callback<Result?> {
             override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
                 val result = response.body()
                 val data = result!!.data
-                RestaurantName!!.text = data.restaurantName
-                menuName!!.text = data.menuName
-                menuRating!!.text = data.menuRating.toString()
-                menuPrice!!.text = data.menuPrice.toString()
-                putBtn!!.text = data.menuPrice.toString() + " 원 담기"
-                ImageLoadTask(data.menuImg, menuImage).execute()
+
+                RestaurantName!!.text = data?.restaurantName
+                menuName!!.text = data?.menuName
+                menuRating!!.text = data?.menuRating.toString()
+                menuPrice!!.text = data?.menuPrice.toString()
+                putBtn!!.text = data?.menuPrice.toString() + " 원 담기"
+                DownloadFilesTask().execute(data?.menuImg)
             }
 
             override fun onFailure(call: Call<Result?>, t: Throwable) {
                 t.printStackTrace()
             }
-        })
-    }
 
-    inner class ImageLoadTask(private val url: String, private val imageView: ImageView) :
-        AsyncTask<Void?, Void?, Bitmap?>() {
-        protected override fun doInBackground(vararg params: Void): Bitmap? {
-            try {
-                val urlConnection = URL(url)
-                val connection = urlConnection
-                    .openConnection() as HttpURLConnection
-                connection.doInput = true
-                connection.connect()
-                val input = connection.inputStream
-                return BitmapFactory.decodeStream(input)
-            } catch (e: Exception) {
-                e.printStackTrace()
+            inner class DownloadFilesTask : AsyncTask<String?, Void?, Bitmap?>() {
+                override fun doInBackground(vararg strings: String?): Bitmap? {
+                    var bmp: Bitmap? = null
+                    try {
+                        val img_url = strings[0] //url of the image
+                        val url = URL(img_url)
+                        bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+                    } catch (e: MalformedURLException) {
+                        e.printStackTrace()
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
+                    return bmp
+                }
+
+                override fun onPreExecute() {
+                    super.onPreExecute()
+                }
+
+                override fun onPostExecute(result: Bitmap?) {
+                    menuImage!!.setImageBitmap(result)
+                }
             }
-            return null
-        }
-
-        override fun onPostExecute(result: Bitmap?) {
-            super.onPostExecute(result)
-            imageView.setImageBitmap(result)
-        }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -160,11 +178,12 @@ class menu_infoActivity : AppCompatActivity() {
         override fun onClick(view: View) {
             val res_name = RestaurantName!!.text.toString()
             val menu_name = menuName!!.text.toString()
-            val menu_price: Int = menuPrice!!.text as kotlin.String?. toInt ()
-            val menu_cnt: Int = menuCnt!!.text as kotlin.String?. toInt ()
+            val menu_price: Int = menuPrice!!.text.toString().toInt()
+            val menu_cnt: Int = menuCnt!!.text.toString().toInt()
 
             // DB 객체 생성
             val dbManager = DBManager(this@menu_infoActivity)
+
             // DB에 저장하기
             dbManager.addBag(menuId, menu_name, menu_image, menu_price, res_name, menu_cnt)
             val intent = Intent(this@menu_infoActivity, ShopBagActivity::class.java)
