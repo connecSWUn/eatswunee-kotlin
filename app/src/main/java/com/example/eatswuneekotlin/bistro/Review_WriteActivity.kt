@@ -15,6 +15,7 @@ import android.widget.*
 import android.widget.RatingBar.OnRatingBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.example.eatswuneekotlin.MasterApplication
 import com.example.eatswuneekotlin.R
 import com.example.eatswuneekotlin.mypage.review_content
 import com.example.eatswuneekotlin.server.Result
@@ -25,53 +26,61 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 
-class review_writeActivity : AppCompatActivity() {
-    private var cancel: Button? = null
-    private var done: Button? = null
+class Review_WriteActivity : AppCompatActivity() {
+
+    private lateinit var cancel: Button
+    private lateinit var done: Button
+
     private lateinit var res: TextView
-    private var menu: TextView? = null
-    private var review_text: EditText? = null
-    private var ratingBar: RatingBar? = null
-    private var review_image_btn: ImageView? = null
-    private var review_image_layout: LinearLayout? = null
-    private var review_image: ImageView? = null
-    private var tempFile: File? = null
-    var mCurrentPhotoPath: String? = null
-    var imageURI: Uri? = null
-    var photoURI: Uri? = null
-    var albumURI: Uri? = null
-    var menu_review_rating: Double? = null
+    private lateinit var menu: TextView
+    private lateinit var review_text: EditText
+    private lateinit var ratingBar: RatingBar
+    private lateinit var review_image_btn: ImageView
+
+    private lateinit var review_image_layout: LinearLayout
+    private lateinit var review_image: ImageView
+    private lateinit var tempFile: File
+
+    lateinit var mCurrentPhotoPath: String
+    lateinit var imageURI: Uri
+    lateinit var photoURI: Uri
+    lateinit var albumURI: Uri
+
+    var menu_review_rating: Double = 0.0
     var menu_id: Long = 0
 
-    /* Retrofit 연결 */
-    private var retrofitClient: RetrofitClient? = null
-    private var serviceApi: ServiceApi? = null
+    val masterApp = MasterApplication()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_review_write)
-        retrofitClient = RetrofitClient.instance
-        serviceApi = RetrofitClient.serviceApi
+
         cancel = findViewById(R.id.review_cancel_btn)
         done = findViewById(R.id.review_done_btn)
         review_image_btn = findViewById(R.id.review_img_btn)
         review_image = findViewById(R.id.review_image)
         review_image_layout = findViewById(R.id.review_image_layout)
+
         res = findViewById(R.id.review_write_res)
         menu = findViewById(R.id.review_write_menu)
         review_text = findViewById(R.id.review_write_content)
         ratingBar = findViewById(R.id.ratingBar)
+
         val intent = intent
         val restaurant_name = intent.getStringExtra("restaurant_name")
         val menu_name = intent.getStringExtra("menu_name")
+
         menu_id = intent.getLongExtra("menu_id", 0)
         res.text = "[$restaurant_name]"
-        menu.setText(menu_name)
-        ratingBar.setOnRatingBarChangeListener(OnRatingBarChangeListener { ratingBar, rating, fromUser ->
-            menu_review_rating = java.lang.Double.valueOf(rating.toDouble())
-        })
+        menu.text = menu_name
+        ratingBar.onRatingBarChangeListener =
+            OnRatingBarChangeListener { ratingBar, rating, fromUser ->
+                menu_review_rating = java.lang.Double.valueOf(rating.toDouble())
+            }
+
         review_image_btn.setOnClickListener(imageOnClickListener())
         done.setOnClickListener(doneBtnOnClickListener())
-        cancel.setOnClickListener(View.OnClickListener { finish() })
+        cancel.setOnClickListener { finish() }
     }
 
     private inner class doneBtnOnClickListener : View.OnClickListener {
@@ -79,16 +88,21 @@ class review_writeActivity : AppCompatActivity() {
             val image_url = tempFile.toString()
             val content = review_text!!.text.toString()
             val review_content = review_content(menu_id, menu_review_rating!!, image_url, content)
-            serviceApi!!.postReview(review_content).enqueue(object : Callback<Result?> {
+
+            masterApp.createRetrofit(this@Review_WriteActivity)
+            val service = masterApp.serviceApi
+
+            service.postReview(review_content)?.enqueue(object : Callback<Result?> {
                 override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
                     if (response.isSuccessful) {
-                        val result = response.body()
                         Log.d("review", "POST Success")
+
                         Toast.makeText(
-                            this@review_writeActivity,
+                            this@Review_WriteActivity,
                             "리뷰가 등록되었습니다.",
                             Toast.LENGTH_SHORT
                         ).show()
+
                         finish()
                     }
                 }
@@ -100,7 +114,7 @@ class review_writeActivity : AppCompatActivity() {
 
     private inner class imageOnClickListener : View.OnClickListener {
         override fun onClick(view: View) {
-            verifyStoragePermissions(this@review_writeActivity)
+            verifyStoragePermissions(this@Review_WriteActivity)
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
             intent.type = MediaStore.Images.Media.CONTENT_TYPE
@@ -111,9 +125,10 @@ class review_writeActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_TAKE_ALBUM) {
-            photoURI = data!!.data
+            photoURI = data!!.data!!
             var cursor: Cursor? = null
             try {
+
                 /*
                  * Uri Schema를
                  * content:/// 에서 file:/// 로 변경한다.
@@ -125,6 +140,7 @@ class review_writeActivity : AppCompatActivity() {
                 val column_index = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
                 cursor.moveToFirst()
                 tempFile = File(cursor.getString(column_index))
+
             } finally {
                 cursor?.close()
             }

@@ -5,7 +5,7 @@ import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
 import com.example.eatswuneekotlin.R
 
-class order_waitingActivity : AppCompatActivity() {
+class Order_WaitingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_order_waiting)

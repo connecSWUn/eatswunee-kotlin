@@ -22,11 +22,13 @@ class MyCommunityAdapter(private val items: List<Post>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
         holder.setItem(item)
-        holder.serviceItemClickListener = ServiceItemClickListener { v, position ->
-            val recruitId = items[position].recruitId
-            val intent = Intent(v.context, friend_viewActivity::class.java)
-            intent.putExtra("recruitId", recruitId)
-            v.context.startActivity(intent)
+        holder.serviceItemClickListener = object : ServiceItemClickListener {
+            override fun onItemClickListener(v: View, position: Int) {
+                val recruitId = items[position].recruitId
+                val intent = Intent(v.context, Friend_ViewActivity::class.java)
+                intent.putExtra("recruitId", recruitId)
+                v.context.startActivity(intent)
+            }
         }
     }
 

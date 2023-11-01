@@ -14,9 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.example.eatswuneekotlin.community.MyCommunityAdapter
-import com.example.eatswuneekotlin.community.friend_writeActivity
+import com.example.eatswuneekotlin.community.Friend_WriteActivity
 import com.example.eatswuneekotlin.server.Result
-import com.example.eatswuneekotlin.MainActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -136,7 +135,7 @@ class CommunityFragment : Fragment() {
 
     private inner class writeOnClickListener : View.OnClickListener {
         override fun onClick(view: View) {
-            val intent = Intent(activity, friend_writeActivity::class.java)
+            val intent = Intent(activity, Friend_WriteActivity::class.java)
             intent.putExtra("edit", false)
             startActivity(intent)
         }

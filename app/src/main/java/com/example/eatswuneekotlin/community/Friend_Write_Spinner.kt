@@ -6,7 +6,7 @@ import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import com.example.eatswuneekotlin.R
 
-class friend_write_spinner : AppCompatActivity() {
+class Friend_Write_Spinner : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friend_write)

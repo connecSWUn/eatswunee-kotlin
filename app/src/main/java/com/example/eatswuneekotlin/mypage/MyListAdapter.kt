@@ -9,7 +9,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eatswuneekotlin.R
-import com.example.eatswuneekotlin.bistro.review_writeActivity
+import com.example.eatswuneekotlin.bistro.Review_WriteActivity
 import com.example.eatswuneekotlin.server.orders
 
 class MyListAdapter(var context: Context, private val ordersList: List<orders>) :
@@ -24,7 +24,7 @@ class MyListAdapter(var context: Context, private val ordersList: List<orders>) 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = ordersList[position]
         holder.reviewBtn.setOnClickListener {
-            val intent = Intent(context, review_writeActivity::class.java)
+            val intent = Intent(context, Review_WriteActivity::class.java)
             intent.putExtra("restaurant_name", item.restaurantName)
             intent.putExtra("menu_name", item.menuName)
             intent.putExtra("menu_id", item.orderMenuId)

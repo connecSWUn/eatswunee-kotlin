@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="15dp"
-    tools:context=".bistro.choigodang_bistroFragment">
+    tools:context=".bistro.Choigodang_BistroFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

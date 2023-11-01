@@ -9,21 +9,25 @@ import android.widget.TimePicker
 import com.example.eatswuneekotlin.R
 
 class TimePickerPopupDialogTwoButton(
-    private val context: Context,
+    private val myContext: Context,
     private val TimePickerPopupDialogClickListener: TimePickerPopupDialogClickListener
 ) : Dialog(
-    context
+    myContext
 ) {
-    private var timePicker: TimePicker? = null
-    private val tvTitle: TextView? = null
-    private var tvNegative: TextView? = null
-    private var tvPositive: TextView? = null
-    private var text: String? = null
-    private val title: String? = null
+    private lateinit var timePicker: TimePicker
+    private lateinit var tvTitle: TextView
+    private lateinit var tvPositive: TextView
+    private lateinit var tvNegative: TextView
+
+    private lateinit var text: String
+    private lateinit var title: String
     private var setHourValue = 0
     private var setMinuteValue = 0
+
     fun setText(text: String?) {
-        this.text = text
+        if (text != null) {
+            this.text = text
+        }
     }
 
     fun setHourValue(setHourValue: Int) {
@@ -37,10 +41,12 @@ class TimePickerPopupDialogTwoButton(
     override fun onCreate(savedInstanceState: Bundle) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.timepicker_alert_dialog_two)
+
         timePicker = findViewById<View>(R.id.timepicker_alert_two) as TimePicker
         timePicker!!.setIs24HourView(true)
         timePicker!!.hour = setHourValue
         timePicker!!.minute = setMinuteValue
+
         timePicker!!.setOnTimeChangedListener { view, hourOfDay, minute ->
             setHourValue = hourOfDay
             setMinuteValue = minute
@@ -48,10 +54,11 @@ class TimePickerPopupDialogTwoButton(
 
         // popup dialog button event
         tvPositive = findViewById(R.id.time_btn_yes)
-        tvPositive.setOnClickListener(View.OnClickListener { v: View? ->
+        tvPositive.setOnClickListener(View.OnClickListener {
             TimePickerPopupDialogClickListener.onPositiveClick(setHourValue, setMinuteValue)
             dismiss()
         })
+
         tvNegative = findViewById(R.id.time_btn_no)
         tvNegative.setOnClickListener(View.OnClickListener { v: View? ->
             TimePickerPopupDialogClickListener.onNegativeClick()
@@ -60,6 +67,6 @@ class TimePickerPopupDialogTwoButton(
     }
 
     companion object {
-        private val TAG: String? = friend_writeActivity.Companion.TAG
+        private val TAG: String? = Friend_WriteActivity.Companion.TAG
     }
 }

@@ -3,7 +3,6 @@ package com.example.eatswuneekotlin.bistro
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import com.example.eatswuneekotlin.bistro.bunsik_bistroFragment
 
 class MyPageAdapter(fm: FragmentManager?, private val numberOfFragment: Int) :
     FragmentStatePagerAdapter(
@@ -11,10 +10,10 @@ class MyPageAdapter(fm: FragmentManager?, private val numberOfFragment: Int) :
     ) {
     override fun getItem(position: Int): Fragment {
         return when (position) {
-            1 -> phoini_bistroFragment()
-            2 -> bunsik_bistroFragment()
-            3 -> mankwon_bistroFragment()
-            4 -> choigodang_bistroFragment()
+            1 -> Phoini_BistroFragment()
+            2 -> Bunsik_BistroFragment()
+            3 -> Mankwon_BistroFragment()
+            4 -> Choigodang_BistroFragment()
             else -> total_bistroFragment()
         }
     }
