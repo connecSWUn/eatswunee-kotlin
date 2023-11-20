@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        FirebaseApp.initializeApp(this)
 
         val toolbar = findViewById<View>(R.id.review_toolbar) as Toolbar
         setSupportActionBar(toolbar)
@@ -104,14 +105,14 @@ class MainActivity : AppCompatActivity() {
 
 
         /** FCM 설정, Token값 가져오기 */
-        //MyFirebaseMessagingService().getFirebaseToken()
+        MyFirebaseMessagingService().getFirebaseToken()
 
-        /** PostNotificatiobn 대응 */
-        //checkAppPushNotification()
+        /** PostNotification 대응 */
+        checkAppPushNotification()
 
         // 사용 안 하면 삭제하기
         /** DynamicLink 수신 확인 */
-        //initDynamicLink()
+        initDynamicLink()
     }
 
     /** Android 13 PostNotification */
@@ -125,7 +126,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         // 권한이 있을 때
-        TODO()
     }
 
     /** 권한 요청 **/
