@@ -43,8 +43,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         Log.d(TAG, "From: " + remoteMessage!!.from)
 
         // Notification 메세지를 수신할 경우
-        // remoteMessage.notification?.body!! 여기에 내용이 저장되어 있음
-        // Log.d(TAG, "Notification Message Body: " + remoteMesssage.notification?.body!!)
+        remoteMessage.notification?.body!! // 여기에 내용이 저장되어 있음
+        Log.d(TAG, "Notification Message Body: " + remoteMessage.notification?.body!!)
 
         // 받은 remoteMessage의 값 출력해 보기. 데이터 메세지 / 알림 메세지
         Log.d(TAG, "Message data : ${remoteMessage.data}")
