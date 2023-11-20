@@ -1,9 +1,12 @@
 package com.example.eatswuneekotlin
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.AsyncTask
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -11,15 +14,18 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.eatswuneekotlin.*
 import com.example.eatswuneekotlin.community.articlesActivity
 import com.example.eatswuneekotlin.server.Result
 import com.example.eatswuneekotlin.server.chat.ChatListActivity
+import com.example.eatswuneekotlin.server.chat.MyFirebaseMessagingService
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
@@ -44,7 +50,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //FirebaseApp.initializeApp(this)
 
         val toolbar = findViewById<View>(R.id.review_toolbar) as Toolbar
         setSupportActionBar(toolbar)
@@ -98,22 +103,51 @@ class MainActivity : AppCompatActivity() {
         })
 
 
-        /*
-        FirebaseMessaging.getInstance().token
-            .addOnCompleteListener(OnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    Log.w(TAG, "Fetching FCM registration token failed", task.exception)
-                    return@OnCompleteListener
-                }
+        /** FCM 설정, Token값 가져오기 */
+        //MyFirebaseMessagingService().getFirebaseToken()
 
-                // Get new FCM registration token
-                val token = task.result
+        /** PostNotificatiobn 대응 */
+        //checkAppPushNotification()
 
-                // Log and toast
-                val msg = getString(R.string.msg_token_fmt, token)
-                Log.d(TAG, msg)
-            })
-         */
+        // 사용 안 하면 삭제하기
+        /** DynamicLink 수신 확인 */
+        //initDynamicLink()
+    }
+
+    /** Android 13 PostNotification */
+    private fun checkAppPushNotification() {
+        // Android 13 이상 && 푸시 권한 없음
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+            && PackageManager.PERMISSION_DENIED == ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)) {
+            // 푸쉬 권한 없음
+            permissionPostNotification.launch(Manifest.permission.POST_NOTIFICATIONS)
+            return
+        }
+
+        // 권한이 있을 때
+        TODO()
+    }
+
+    /** 권한 요청 **/
+    private val permissionPostNotification =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                // 권한 허용
+            } else {
+                // 권한 비허용
+            }
+        }
+
+    // 사용 안 하면 삭제하기
+    /** DynamicLink **/
+    private fun initDynamicLink() {
+        val dynamicLinkData = intent.extras
+        if (dynamicLinkData != null) {
+            var dataStr = "DynamicLink 수신받은 값 \n"
+            for (key in dynamicLinkData.keySet()) {
+                dataStr += "key: $key / value: ${dynamicLinkData.getString(key)}\n"
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

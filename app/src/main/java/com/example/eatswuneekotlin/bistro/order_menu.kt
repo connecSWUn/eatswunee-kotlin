@@ -1,8 +1,8 @@
-package com.example.eatswuneekotlin.bistro.recyclerView
+package com.example.eatswuneekotlin.bistro
 
 import com.google.gson.annotations.SerializedName
 
-data class orderMenu (
+data class order_menu (
     @SerializedName("menuId") private val menuId: Long,
     @SerializedName("menuCnt") private val menuCnt: Int,
 )

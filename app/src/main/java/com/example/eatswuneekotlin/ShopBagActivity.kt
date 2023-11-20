@@ -12,8 +12,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eatswuneekotlin.bistro.Order_WaitingActivity
-import com.example.eatswuneekotlin.bistro.orderMenuList
-import com.example.eatswuneekotlin.bistro.recyclerView.orderMenu
+import com.example.eatswuneekotlin.bistro.orderMenus
+import com.example.eatswuneekotlin.bistro.order_menu
 import com.example.eatswuneekotlin.server.Result
 import com.example.eatswuneekotlin.server.sqlite.DBManager
 import com.example.eatswuneekotlin.server.sqlite.shop_bag
@@ -80,19 +80,19 @@ class ShopBagActivity : AppCompatActivity() {
                 Toast.makeText(this@ShopBagActivity, "주문 항목이 없습니다.", Toast.LENGTH_SHORT).show()
             } else {
                 try {
-                    val list = mutableListOf<orderMenu>()
+                    val list = mutableListOf<order_menu>()
 
                     while (cursor.moveToNext()) {
                         val id = cursor.getLong(0)
                         val cnt = cursor.getInt(5)
-                        val menu = orderMenu(id, cnt)
+                        val menu = order_menu(id, cnt)
 
                         list.add(menu)
                     }
-                    val orderMenuList = orderMenuList(list)
+                    val orderMenus = orderMenus(list)
 
 
-                    service!!.postOrder(orderMenuList).enqueue(object : Callback<Result> {
+                    service!!.postOrder(orderMenus).enqueue(object : Callback<Result> {
                         override fun onResponse(call: Call<Result>, response: Response<Result>) {
                             Log.d("order", response.isSuccessful.toString())
 
