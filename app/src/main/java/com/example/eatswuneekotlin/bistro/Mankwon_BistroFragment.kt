@@ -52,32 +52,32 @@ class Mankwon_BistroFragment : Fragment() {
         return v
     }
 
-    private fun init(restaurantId: Long) {
+    private fun init(restaurantId: Int) {
         val masterApp = MasterApplication()
         masterApp.createRetrofit(activity)
 
         val service = masterApp.serviceApi
 
-        service.getData("gusia", restaurantId)?.enqueue(object : Callback<Result?> {
-            override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
+        service.getMenuList(restaurantId).enqueue(object : Callback<Result> {
+            override fun onResponse(call: Call<Result>, response: Response<Result>) {
                 val result = response.body()
                 val data = result!!.data
 
-                if (data?.homeOrdersList == null) {
+                if (data.homeOrdersList == null) {
                     viewPager!!.visibility = View.GONE
                 } else {
 
-                    viewPagerAdapter = MyViewPagerAdapter(data?.homeOrdersList!!)
+                    viewPagerAdapter = MyViewPagerAdapter(data.homeOrdersList!!)
                     viewPager!!.adapter = viewPagerAdapter
                     viewPager!!.orientation = ViewPager2.ORIENTATION_HORIZONTAL
 
                 }
 
-                bistroAdapter = MyBistroAdapter(data?.menusList!!)
+                bistroAdapter = MyBistroAdapter(data.menusList!!)
                 mRecyclerView!!.adapter = bistroAdapter
             }
 
-            override fun onFailure(call: Call<Result?>, t: Throwable) {
+            override fun onFailure(call: Call<Result>, t: Throwable) {
                 t.printStackTrace()
             }
         })

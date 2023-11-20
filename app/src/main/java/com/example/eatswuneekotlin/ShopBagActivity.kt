@@ -12,12 +12,12 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eatswuneekotlin.bistro.Order_WaitingActivity
+import com.example.eatswuneekotlin.bistro.orderMenuList
+import com.example.eatswuneekotlin.bistro.recyclerView.orderMenu
 import com.example.eatswuneekotlin.server.Result
 import com.example.eatswuneekotlin.server.sqlite.DBManager
 import com.example.eatswuneekotlin.server.sqlite.shop_bag
 import com.example.eatswuneekotlin.server.sqlite.ShopBagAdapter
-import org.json.JSONArray
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -79,27 +79,27 @@ class ShopBagActivity : AppCompatActivity() {
             if (cursor!!.count == 0) {
                 Toast.makeText(this@ShopBagActivity, "주문 항목이 없습니다.", Toast.LENGTH_SHORT).show()
             } else {
-                val `object` = JSONObject()
-                val array = JSONArray()
                 try {
-                    while (cursor.moveToNext()) {
-                        val objectChild = JSONObject()
-                        val id = cursor.getInt(0)
-                        val cnt = cursor.getInt(5)
-                        objectChild.put("menuId", id)
-                        objectChild.put("menuCnt", cnt)
-                        array.put(objectChild)
-                    }
-                    `object`.put("orderMenuList", array)
+                    val list = mutableListOf<orderMenu>()
 
-                    service!!.postOrder(`object`)!!.enqueue(object : Callback<Result?> {
-                        override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
+                    while (cursor.moveToNext()) {
+                        val id = cursor.getLong(0)
+                        val cnt = cursor.getInt(5)
+                        val menu = orderMenu(id, cnt)
+
+                        list.add(menu)
+                    }
+                    val orderMenuList = orderMenuList(list)
+
+
+                    service!!.postOrder(orderMenuList).enqueue(object : Callback<Result> {
+                        override fun onResponse(call: Call<Result>, response: Response<Result>) {
                             Log.d("order", response.isSuccessful.toString())
+
                         }
 
                         override fun onFailure(call: Call<Result?>, t: Throwable) {}
                     })
-                    println(`object`)
 
                 } catch (e: Exception) {
                     throw RuntimeException(e)

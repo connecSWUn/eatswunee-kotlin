@@ -1,222 +1,91 @@
 package com.example.eatswuneekotlin.server
 
-import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class Data {
+data class Data (
     /* 로그인 */
-    @SerializedName("grantType")
-    var grantType: String? = null
+    @SerializedName("grantType") val grantType: String,
+    @SerializedName("accessToken") val accessToken: String,
+    @SerializedName("refreshToken") val refreshToken: String,
 
-    @SerializedName("accessToken")
-    var accessToken: String? = null
-
-    @SerializedName("refreshToken")
-    var refreshToken: String? = null
-
-    @SerializedName("category")
-    @Expose
-    var category: String? = null
-
-    @SerializedName("cursorId")
-    @Expose
-    var cursorId: String? = null
-
-    @SerializedName("post")
-    @Expose
-    var postList: List<Post>? = null
-
-    @SerializedName("post_id")
-    var post_id: Long = 0
-
-    @SerializedName("created_at")
-    var created_at: String? = null
-
-    @SerializedName("title")
-    var title: String? = null
-
-    @SerializedName("spot")
-    var spot: String? = null
-
-    @SerializedName("start_time")
-    var start_time: String? = null
-
-    @SerializedName("end_time")
-    var end_time: String? = null
-
-    @SerializedName("recruit_status")
-    var recruit_status: String? = null
-
-    @SerializedName("writer")
-    var writers: writer? = null
-
-    @SerializedName("content")
-    var content: String? = null
-
-    @SerializedName("user_is_writer")
-    var isUser_is_writer = false
+    @SerializedName("category") val category: String,
+    @SerializedName("cursorId") val cursorId: String,
+    @SerializedName("post") val postList: List<Post>,
+    @SerializedName("post_id") val post_id: Long,
+    @SerializedName("created_at") val created_at: String,
+    @SerializedName("title") val title: String,
+    @SerializedName("spot") val spot: String,
+    @SerializedName("start_time") val start_time: String,
+    @SerializedName("end_time") val end_time: String,
+    @SerializedName("recruit_status") val recruit_status: String,
+    @SerializedName("writer") val writers: writer,
+    @SerializedName("content") val content: String,
+    @SerializedName("user_is_writer") val isUser_is_writer: Boolean,
 
     /* 식당별 메뉴 조회 */
     /* 식당별 메뉴 리스트 조회 API */
-    @SerializedName("homeOrders")
-    var homeOrdersList: List<homeOrders>? = null
-
-    @SerializedName("menus")
-    var menusList: List<menus>? = null
-
-    @SerializedName("restaurants")
-    var restaurantsList: List<restaurants>? = null
+    @SerializedName("homeOrders") val homeOrdersList: List<homeOrders>,
+    @SerializedName("menus") val menusList: List<menus>,
+    @SerializedName("restaurants") val restaurantsList: List<restaurants>,
 
     /* 메뉴 내용 조회 */
     /* 메뉴 내용 조회 API */
-    @SerializedName("menuId")
-    @Expose
-    var menuId: Long = 0
-
-    @SerializedName("RestaurantName")
-    @Expose
-    var restaurantName: String? = null
-
-    @SerializedName("menuName")
-    @Expose
-    var menuName: String? = null
-
-    @SerializedName("menuPrice")
-    @Expose
-    var menuPrice = 0
-
-    @SerializedName("menuRating")
-    @Expose
-    var menuRating = 0f
-
-    @SerializedName("menuReviewCnt")
-    @Expose
-    var menuReviewCnt = 0f
+    @SerializedName("menuId") val menuId: Long,
+    @SerializedName("RestaurantName") val restaurantName: String,
+    @SerializedName("menuName") val menuName: String,
+    @SerializedName("menuPrice") val menuPrice: Int,
+    @SerializedName("menuRating") val menuRating: Double,
+    @SerializedName("menuReviewCnt") val menuReviewCnt: Int,
 
     /* 메뉴 검색 API */
     /* 메뉴 검색 API */
-    @SerializedName("searchedMenus")
-    @Expose
-    var searchedMenusList: List<searchedMenus>? = null
+    @SerializedName("searchedMenus") val searchedMenusList: List<searchedMenus>,
 
     /* 메뉴 리뷰 조회 */
     /* 메뉴의 리뷰 조회 */
-    @SerializedName("reviewCnt")
-    @Expose
-    var reviewCnt: Long = 0
-
-    @SerializedName("menuImg")
-    @Expose
-    var menuImg: String? = null
-
-    @SerializedName("menuAvgRating")
-    @Expose
-    var menuAvgRating = 0f
-
-    @SerializedName("reviewRating")
-    var reviewRating: reviewRating? = null
-
-    @SerializedName("reviews")
-    var reviewsList: List<reviews>? = null
+    @SerializedName("reviewCnt") val reviewCnt: Long,
+    @SerializedName("menuImg") val menuImg: String,
+    @SerializedName("menuAvgRating") val menuAvgRating: Double,
+    @SerializedName("reviewRating") val reviewRating: reviewRating,
+    @SerializedName("reviews") val reviewsList: List<reviews>,
 
     /* 주문 내역 조회 */
-    @SerializedName("orders")
-    var ordersList: List<orders>? = null
-
-    @SerializedName("order_num")
-    @Expose
-    var order_num: String? = null
-
-    @SerializedName("order_created_at")
-    @Expose
-    var order_created_at: String? = null
-
-    @SerializedName("order_total_price")
-    @Expose
-    var order_total_price: String? = null
+    @SerializedName("orders") val ordersList: List<orders>,
+    @SerializedName("order_num") val order_num: String,
+    @SerializedName("order_created_at") val order_created_at: String,
+    @SerializedName("order_total_price") val order_total_price: String,
 
     /* 마이페이지 화면 조회 */
-    @SerializedName("user_id")
-    @Expose
-    var user_id: String? = null
-
-    @SerializedName("user_profile_url")
-    @Expose
-    var user_profile_url: String? = null
-
-    @SerializedName("user_name")
-    @Expose
-    var user_name: String? = null
-
-    @SerializedName("loginId")
-    @Expose
-    var loginId: String? = null
+    @SerializedName("user_id") val user_id: Long,
+    @SerializedName("user_profile_url") val user_profile_url: String,
+    @SerializedName("user_name") val user_name: String,
+    @SerializedName("loginId") val loginId: String,
 
     /* 작성 게시물 조회 */
-    @SerializedName("userId")
-    var userId: Long = 0
-
-    @SerializedName("userName")
-    var userName: String? = null
-
-    @SerializedName("postTotalCnt")
-    var postTotalCnt = 0
-
-    @SerializedName("posts")
-    var postsList: List<posts>? = null
+    @SerializedName("userId") val userId: Long,
+    @SerializedName("userName") val userName: String,
+    @SerializedName("postTotalCnt") val postTotalCnt: Int,
+    @SerializedName("posts") val postsList: List<posts>,
 
     /* 채팅방 존재 여부 확인 */
-    @SerializedName("exist_chatroom")
-    @Expose
-    var isExist_chatroom = false
+    @SerializedName("exist_chatroom") val isExist_chatroom: Boolean,
 
     /* 채팅방 입장 */
-    @SerializedName("recruitStatus")
-    @Expose
-    var recruitStatus: String? = null
-
-    @SerializedName("recruit_title")
-    @Expose
-    var recruit_title: String? = null
-
-    @SerializedName("recruit_spot")
-    @Expose
-    var recruit_spot: String? = null
-
-    @SerializedName("recruit_start_time")
-    @Expose
-    var recruit_start_time: String? = null
-
-    @SerializedName("recruit_end_time")
-    @Expose
-    var recruit_end_time: String? = null
-
-    @SerializedName("recruit_created_at")
-    @Expose
-    var recruit_created_at: String? = null
-
-    @SerializedName("sender_name")
-    @Expose
-    var sender_name: String? = null
-
-    @SerializedName("messages")
-    var messagesList: MutableList<messages>? = null
+    @SerializedName("recruitStatus") val recruitStatus: String,
+    @SerializedName("recruit_title") val recruit_title: String,
+    @SerializedName("recruit_spot") val recruit_spot: String,
+    @SerializedName("recruit_start_time") val recruit_start_time: String,
+    @SerializedName("recruit_end_time") val recruit_end_time: String,
+    @SerializedName("recruit_created_at") val recruit_created_at: String,
+    @SerializedName("sender_name") val sender_name: String,
+    @SerializedName("messages") val messagesList: List<messages>,
 
     /* 채팅방 만들기 */
-    @SerializedName("chat_room_id")
-    @Expose
-    var chat_room_id: Long = 0
+    @SerializedName("chat_room_id") val chat_room_id: Long,
 
     /* 채팅방 리스트 */
-    @SerializedName("chatRooms")
-    var chatRoomsList: List<chatRooms>? = null
+    @SerializedName("chatRooms") val chatRoomsList: List<chatRooms>,
 
     /* 중복 확인 */
-    @SerializedName("is_duplicated")
-    var isIs_duplicated = false
-        private set
-
-    fun setIs_duplicated(is_duplicated: Boolean) {
-        isIs_duplicated = is_duplicated
-    }
-}
+    @SerializedName("is_duplicated") val isIs_duplicated: Boolean
+)

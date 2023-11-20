@@ -67,12 +67,12 @@ class CommunityFragment : Fragment() {
         /* 초기 세팅
          * 어플리케이션 실행 시 커뮤니티 화면 기본 선택 버튼 : 전체 버튼
          */
-        total.setSelected(true)
-        gusia.setSelected(false)
-        nuri.setSelected(false)
-        fiftieth.setSelected(false)
-        shalom.setSelected(false)
-        gyo.setSelected(false)
+        total.isSelected = true
+        gusia.isSelected = false
+        nuri.isSelected = false
+        fiftieth.isSelected = false
+        shalom.isSelected = false
+        gyo.isSelected = false
         init("ALL")
 
         /* 커뮤니티 버튼 리스너 */
@@ -210,7 +210,7 @@ class CommunityFragment : Fragment() {
             shalom!!.isSelected = false
             gyo!!.isSelected = true
 
-            //init("gyo");
+            init("gyo");
         }
     }
 }

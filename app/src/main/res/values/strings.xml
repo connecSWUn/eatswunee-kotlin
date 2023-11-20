@@ -26,4 +26,10 @@
         <item>교직원</item>
         <item>누리관</item>
     </string-array>
+
+    <string-array name="spinner_array_status">
+        <item>찾는 중</item>
+        <item>연락 중</item>
+        <item>구함</item>
+    </string-array>
 </resources>

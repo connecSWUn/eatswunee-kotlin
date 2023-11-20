@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        FirebaseApp.initializeApp(this)
+        //FirebaseApp.initializeApp(this)
 
         val toolbar = findViewById<View>(R.id.review_toolbar) as Toolbar
         setSupportActionBar(toolbar)
@@ -97,6 +97,8 @@ class MainActivity : AppCompatActivity() {
             true
         })
 
+
+        /*
         FirebaseMessaging.getInstance().token
             .addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -111,6 +113,7 @@ class MainActivity : AppCompatActivity() {
                 val msg = getString(R.string.msg_token_fmt, token)
                 Log.d(TAG, msg)
             })
+         */
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -153,7 +156,7 @@ class MainActivity : AppCompatActivity() {
         masterApp.createRetrofit(this@MainActivity)
         val service = masterApp.serviceApi
 
-        service.profile.enqueue(object : Callback<Result> {
+        service.getProfile().enqueue(object : Callback<Result> {
             override fun onResponse(call: Call<Result>, response: Response<Result>) {
                 val result = response.body()
                 val data = result!!.data
@@ -161,7 +164,7 @@ class MainActivity : AppCompatActivity() {
 
                 val nav_header = navigationView!!.getHeaderView(0)
                 nav_header_text = nav_header.findViewById(R.id.navi_header_name)
-                nav_header_text.setText(data!!.user_name)
+                nav_header_text.text = data!!.user_name
                 nav_header_image = nav_header.findViewById(R.id.navi_header_img)
                 DownloadFilesTask().execute(data.user_profile_url)
             }

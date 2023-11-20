@@ -11,7 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="62dp"
         android:background="#F2B089"
-        android:text="채팅 목록 (3)"
+        android:text="채팅 목록"
         android:textColor="#D75509"
         android:textSize="22sp"
         android:textStyle="bold"
@@ -115,12 +115,12 @@
             app:srcCompat="@drawable/baseline_keyboard_arrow_down_24" />
     </LinearLayout>
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/view_profile"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -189,6 +189,7 @@
         android:text="찾는 중이군요!"
         android:textColor="#45210D"
         android:textSize="16sp"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.913"
         app:layout_constraintStart_toStartOf="parent"
@@ -310,6 +311,33 @@
                 android:textColor="#808E3B0B"
                 android:textSize="12sp" />
         </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/status_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/profile_stroke_background"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.91"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout12">
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/spinner_array_status"
+            android:paddingLeft="3dp"
+            android:paddingTop="1dp"
+            android:paddingRight="3dp"
+            android:paddingBottom="1dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="394dp" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

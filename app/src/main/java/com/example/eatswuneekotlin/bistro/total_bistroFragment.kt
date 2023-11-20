@@ -52,14 +52,14 @@ class total_bistroFragment : Fragment() {
         return v
     }
 
-    private fun init(restaurantId: Long) {
+    private fun init(restaurantId: Int) {
         val masterApp = MasterApplication()
         masterApp.createRetrofit(activity)
 
         val service = masterApp.serviceApi
 
-        service!!.getData("gusia", restaurantId)?.enqueue(object : Callback<Result?> {
-            override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
+        service.getMenuList(restaurantId).enqueue(object : Callback<Result> {
+            override fun onResponse(call: Call<Result>, response: Response<Result>) {
                 val result = response.body()
                 val data = result!!.data
 
@@ -77,7 +77,7 @@ class total_bistroFragment : Fragment() {
                 mRecyclerView!!.adapter = bistroAdapter
             }
 
-            override fun onFailure(call: Call<Result?>, t: Throwable) {
+            override fun onFailure(call: Call<Result>, t: Throwable) {
                 t.printStackTrace()
             }
         })

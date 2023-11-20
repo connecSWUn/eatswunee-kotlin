@@ -9,6 +9,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
+import com.example.eatswuneekotlin.MasterApplication
 import com.example.eatswuneekotlin.R
 import com.example.eatswuneekotlin.server.Result
 import com.example.eatswuneekotlin.server.RetrofitClient
@@ -18,15 +19,16 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class order_listActivity : AppCompatActivity() {
-    private var mRecyclerView: RecyclerView? = null
-    private var adapter: MyListAdapter? = null
-    private var retrofitClient: RetrofitClient? = null
-    private var serviceApi: ServiceApi? = null
+    private lateinit var mRecyclerView: RecyclerView
+    private lateinit var adapter: MyListAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_order_list)
+
         val toolbar = findViewById<View>(R.id.order_list_toolbar) as Toolbar
         setSupportActionBar(toolbar)
+
         val actionBar = supportActionBar
         actionBar!!.setDisplayShowTitleEnabled(false)
         actionBar.setDisplayShowCustomEnabled(true)
@@ -36,20 +38,24 @@ class order_listActivity : AppCompatActivity() {
         // RecyclerView
         mRecyclerView = findViewById<View>(R.id.order_list_RecyclerView) as RecyclerView
         mRecyclerView!!.addItemDecoration(RecyclerViewDecoration(50))
+
         init()
 
-        /* initiate recyclerView */mRecyclerView!!.layoutManager = LinearLayoutManager(this)
+        /* initiate recyclerView */
+        mRecyclerView!!.layoutManager = LinearLayoutManager(this)
         mRecyclerView!!.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
     }
 
     private fun init() {
-        retrofitClient = RetrofitClient.instance
-        serviceApi = RetrofitClient.serviceApi
-        serviceApi.orderList.enqueue(object : Callback<Result?> {
-            override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
+        val masterApp = MasterApplication()
+        masterApp.createRetrofit(this@order_listActivity)
+
+        val service = masterApp.serviceApi
+        service.getOrderList().enqueue(object : Callback<Result> {
+            override fun onResponse(call: Call<Result>, response: Response<Result>) {
                 val result = response.body()
                 val data = result!!.data
-                adapter = MyListAdapter(applicationContext, data.ordersList)
+                adapter = MyListAdapter(applicationContext, data?.ordersList!!)
                 mRecyclerView!!.adapter = adapter
             }
 

@@ -79,7 +79,7 @@
                 android:id="@+id/articles_cnt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="전체 글(1)"
+                android:text="전체 글 (1)"
                 android:textColor="#45210D" />
         </LinearLayout>
 

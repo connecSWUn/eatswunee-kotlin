@@ -1,5 +1,6 @@
 package com.example.eatswuneekotlin.server.login
 
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -11,18 +12,21 @@ import retrofit2.HttpException
 interface SafeApiCall {
 
     suspend fun <T> safeApiCall(
-        apiCall: suspend() -> T
+        apiCall: suspend () -> T
     ): Resource<T> {
         return withContext(Dispatchers.IO) {
             try {
+                Log.d("SafeApiCall 1", "is ok")
                 // 통신에 성공하면 전달 받은 값 전송
                 Resource.Success(apiCall.invoke())
             } catch (throwable: Throwable) {
                 when(throwable) {
                     is HttpException -> {
+                        Log.d("SafeApiCall 2", throwable.response()?.errorBody()!!.string())
                         Resource.Failure(false, throwable.code(), throwable.response()?.errorBody())
                     }
                     else -> {
+                        Log.d("SafeApiCall 3", "else error")
                         Resource.Failure(true, null, null)
                     }
                 }

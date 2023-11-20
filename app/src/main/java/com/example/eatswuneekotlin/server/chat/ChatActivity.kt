@@ -13,10 +13,9 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
+import com.example.eatswuneekotlin.MasterApplication
 import com.example.eatswuneekotlin.R
 import com.example.eatswuneekotlin.server.Result
-import com.example.eatswuneekotlin.server.RetrofitClient
-import com.example.eatswuneekotlin.server.ServiceApi
 import com.example.eatswuneekotlin.server.messages
 import okhttp3.*
 
@@ -28,36 +27,46 @@ import retrofit2.Response
 import java.util.*
 
 class ChatActivity : AppCompatActivity() {
-    private var mRecyclerView: RecyclerView? = null
-    private var adapter: chatAdapter? = null
-    private var retrofitClient: RetrofitClient? = null
-    private var client: OkHttpClient? = null
-    private var ws: WebSocket? = null
-    private var serviceApi: ServiceApi? = null
+
+    private lateinit var mRecyclerView: RecyclerView
+    private lateinit var adapter: chatAdapter
+    private lateinit var client: OkHttpClient
+    private lateinit var ws: WebSocket
+
     var chatRoomId: Long = 0
-    private var user_id: String? = null
-    private val messageType: String? = null
+    private var user_id: Long = 0
+    private lateinit var messageType: String
     private var isSend = 0
-    var title: TextView? = null
-    var date: TextView? = null
-    var spot: TextView? = null
-    var time: TextView? = null
-    var status: TextView? = null
-    var nickname: TextView? = null
-    var start_message: TextView? = null
-    var message: EditText? = null
-    var sendBtn: ImageButton? = null
+
+    private lateinit var title: TextView
+    private lateinit var date: TextView
+    private lateinit var spot: TextView
+    private lateinit var time: TextView
+    private lateinit var status: TextView
+    private lateinit var nickname: TextView
+
+    private lateinit var start_message: TextView
+    private lateinit var message: EditText
+    private lateinit var sendBtn: ImageButton
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
-        retrofitClient = RetrofitClient.Companion.instance
-        serviceApi = RetrofitClient.Companion.serviceApi
+
+        val masterApp = MasterApplication()
+        masterApp.createRetrofit(this@ChatActivity)
+
+        val service = masterApp.serviceApi
+
         client = OkHttpClient()
-        val request: Request = OkHttpClient.Builder()
-            .url("ws://43.201.201.163:8080/ws/chat")
-            .build()
-        val listener: WebSocketListener = WebSocketListener()
-        ws = client!!.newWebSocket(request, listener)
+
+        //val request: Request = OkHttpClient.Builder()
+        //    .url("ws://43.201.201.163:8080/ws/chat")
+        //    .build()
+
+        val listener = WebSocketListener()
+        //ws = client!!.newWebSocket(request, listener)
+
         val toolbar = findViewById<View>(R.id.chat_toolbar) as Toolbar
         setSupportActionBar(toolbar)
         val actionBar = supportActionBar
@@ -65,6 +74,7 @@ class ChatActivity : AppCompatActivity() {
         actionBar.setDisplayShowCustomEnabled(true)
         actionBar.setDisplayHomeAsUpEnabled(true)
         actionBar.setHomeAsUpIndicator(R.drawable.baseline_arrow_back_ios_new_24)
+
         title = findViewById(R.id.chat_title)
         date = findViewById(R.id.chat_date)
         spot = findViewById(R.id.chat_spot)
@@ -74,55 +84,66 @@ class ChatActivity : AppCompatActivity() {
         start_message = findViewById(R.id.start_message)
         message = findViewById(R.id.chat_box)
         sendBtn = findViewById(R.id.send_btn)
+
         val intent = intent
         chatRoomId = intent.extras!!.getLong("chatRoomId")
 
         // RecyclerView
         mRecyclerView = findViewById<View>(R.id.recyclerView) as RecyclerView
-        mRecyclerView!!.addItemDecoration(RecyclerViewDecoration(50))
+        mRecyclerView.addItemDecoration(RecyclerViewDecoration(50))
         sendBtn.setOnClickListener(sendOnClickListener())
-        serviceApi.getProfile().enqueue(object : Callback<Result?> {
+        
+        service.getProfile().enqueue(object : Callback<Result?> {
             override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
                 val result = response.body()
-                val data = result.getData()
-                user_id = data.user_id
+                val data = result?.data
+                user_id = data!!.user_id
             }
 
             override fun onFailure(call: Call<Result?>, t: Throwable) {}
         })
         init(chatRoomId)
 
-        /* initiate recyclerView */mRecyclerView!!.layoutManager = LinearLayoutManager(this)
-        mRecyclerView!!.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        /* initiate recyclerView */
+        mRecyclerView.layoutManager = LinearLayoutManager(this)
+        mRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
     }
 
     private fun init(chatRoomId: Long) {
-        serviceApi!!.enterChat(chatRoomId).enqueue(object : Callback<Result?> {
+        val masterApp = MasterApplication()
+        masterApp.createRetrofit(this@ChatActivity)
+
+        val service = masterApp.serviceApi
+
+        service.enterChat(chatRoomId).enqueue(object : Callback<Result?> {
             override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
                 val result = response.body()
-                val data = result.getData()
-                title.setText(data.recruit_title)
-                date.setText(data.recruit_created_at)
-                spot.setText(data.recruit_spot)
-                time.setText(data.recruit_start_time + "-" + data.recruit_end_time)
-                status.setText(data.recruit_status)
-                nickname.setText(data.sender_name)
-                start_message.setText(data.sender_name + "님과의 대화를 시작합니다.")
+                val data = result!!.data
+
+                title.text = data.recruit_title
+                date.text = data.recruit_created_at
+                spot.text = data.recruit_spot
+                time.text = data.recruit_start_time + "-" + data.recruit_end_time
+                status.text = data.recruit_status
+                nickname.text = data.sender_name
+                start_message.text = data.sender_name + "님과의 대화를 시작합니다."
+
                 if (data.recruit_status === "ONGOING") {
-                    status!!.text = "찾는 중..."
-                    status!!.setBackgroundResource(R.drawable.community_state_finding)
+                    status.text = "찾는 중..."
+                    status.setBackgroundResource(R.drawable.community_state_finding)
                 } else if (data.recruit_status === "CONNECTING") {
-                    status!!.text = "연락 중..."
-                    status!!.setBackgroundResource(R.drawable.community_state_talking)
+                    status.text = "연락 중..."
+                    status.setBackgroundResource(R.drawable.community_state_talking)
                 } else if (data.recruit_status === "COMPLETED") {
-                    status!!.text = "구했어요!"
-                    status!!.setBackgroundResource(R.drawable.community_state_done)
+                    status.text = "구했어요!"
+                    status.setBackgroundResource(R.drawable.community_state_done)
                 }
 
-                /* initiate adapter */adapter =
+                /* initiate adapter */
+                adapter =
                     chatAdapter(data.sender_name, data.messagesList, applicationContext)
-                mRecyclerView!!.adapter = adapter
-                mRecyclerView!!.scrollToPosition(adapter!!.itemCount - 1)
+                mRecyclerView.adapter = adapter
+                mRecyclerView.scrollToPosition(adapter.itemCount - 1)
             }
 
             override fun onFailure(call: Call<Result?>, t: Throwable) {}
@@ -130,9 +151,8 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private inner class WebSocketListener : okhttp3.WebSocketListener() {
-        override fun onOpen(webSocket: WebSocket, response: okhttp3.Response) {
-            super.onOpen(webSocket, response)
-        }
+
+        private val NORMAL_CLOSURE_STATUS = 1000
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             super.onMessage(webSocket, text)
@@ -165,13 +185,13 @@ class ChatActivity : AppCompatActivity() {
             val created_at = (year + "." + month + "." + day + " " + hour + ":"
                     + minute + ":" + second)
             val messages = messages(created_at, "sender", text, true)
-            adapter!!.addChat(messages)
-            mRecyclerView!!.scrollToPosition(adapter!!.itemCount - 1)
+            adapter.addChat(messages)
+            mRecyclerView.scrollToPosition(adapter.itemCount - 1)
         }
 
         override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
             super.onClosing(webSocket, code, reason)
-            webSocket.close(Companion.NORMAL_CLOSURE_STATUS, null)
+            webSocket.close(NORMAL_CLOSURE_STATUS, null)
             webSocket.cancel()
             Log.d("WebSocketConnection", "Closing : $code / $reason")
         }
@@ -179,10 +199,6 @@ class ChatActivity : AppCompatActivity() {
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: okhttp3.Response?) {
             super.onFailure(webSocket, t, response)
             Log.d("WebSocketConnection", "Error : " + t.message)
-        }
-
-        companion object {
-            private const val NORMAL_CLOSURE_STATUS = 1000
         }
     }
 
@@ -217,9 +233,9 @@ class ChatActivity : AppCompatActivity() {
                     `object`.put("messageType", "ENTER")
                     `object`.put("chatRoomId", java.lang.Long.valueOf(chatRoomId))
                     `object`.put("senderId", java.lang.Long.valueOf(user_id))
-                    `object`.put("message", message!!.text)
+                    `object`.put("message", message.text)
                     Log.d("chat", `object`.toString())
-                    ws!!.send(`object`.toString())
+                    ws.send(`object`.toString())
                     val cal = Calendar.getInstance()
                     var year = cal[Calendar.YEAR].toString()
                     var month = (cal[Calendar.MONTH] + 1).toString()
@@ -247,10 +263,10 @@ class ChatActivity : AppCompatActivity() {
                     }
                     val created_at = (year + "." + month + "." + day + " " + hour + ":"
                             + minute + ":" + second)
-                    val messages = messages(created_at, "sender", message!!.text.toString(), false)
-                    adapter!!.addChat(messages)
-                    mRecyclerView!!.scrollToPosition(adapter!!.itemCount - 1)
-                    message!!.setText("")
+                    val messages = messages(created_at, "sender", message.text.toString(), false)
+                    adapter.addChat(messages)
+                    mRecyclerView.scrollToPosition(adapter.itemCount - 1)
+                    message.setText("")
                     isSend++
                 } catch (e: JSONException) {
                     throw RuntimeException(e)
@@ -261,9 +277,9 @@ class ChatActivity : AppCompatActivity() {
                     `object`.put("messageType", "TALK")
                     `object`.put("chatRoomId", java.lang.Long.valueOf(chatRoomId))
                     `object`.put("senderId", java.lang.Long.valueOf(user_id))
-                    `object`.put("message", message!!.text)
+                    `object`.put("message", message.text)
                     Log.d("chat", `object`.toString())
-                    ws!!.send(`object`.toString())
+                    ws.send(`object`.toString())
                     val cal = Calendar.getInstance()
                     var year = cal[Calendar.YEAR].toString()
                     var month = (cal[Calendar.MONTH] + 1).toString()
@@ -291,10 +307,10 @@ class ChatActivity : AppCompatActivity() {
                     }
                     val created_at = (year + "." + month + "." + day + " " + hour + ":"
                             + minute + ":" + second)
-                    val messages = messages(created_at, "sender", message!!.text.toString(), false)
-                    adapter!!.addChat(messages)
-                    mRecyclerView!!.scrollToPosition(adapter!!.itemCount - 1)
-                    message!!.setText("")
+                    val messages = messages(created_at, "sender", message.text.toString(), false)
+                    adapter.addChat(messages)
+                    mRecyclerView.scrollToPosition(adapter.itemCount - 1)
+                    message.setText("")
                 } catch (e: JSONException) {
                     throw RuntimeException(e)
                 }

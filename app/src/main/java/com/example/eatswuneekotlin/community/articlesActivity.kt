@@ -39,6 +39,11 @@ class articlesActivity : AppCompatActivity() {
     private lateinit var profile: ImageView
     private lateinit var write: Button
 
+    override fun onResume() {
+        super.onResume()
+        init()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_articles)
@@ -108,8 +113,8 @@ class articlesActivity : AppCompatActivity() {
 
         val service = masterApp.serviceApi
 
-        service.profile.enqueue(object : Callback<Result?> {
-            override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
+        service.getProfile().enqueue(object : Callback<Result> {
+            override fun onResponse(call: Call<Result>, response: Response<Result>) {
                 val result = response.body()
                 val data = result!!.data
 
@@ -118,10 +123,11 @@ class articlesActivity : AppCompatActivity() {
                 DownloadFilesTask().execute(data?.user_profile_url)
             }
 
-            override fun onFailure(call: Call<Result?>, t: Throwable) {
+            override fun onFailure(call: Call<Result>, t: Throwable) {
                 t.printStackTrace()
             }
         })
+
     }
 
     internal inner class DownloadFilesTask : AsyncTask<String?, Void?, Bitmap?>() {

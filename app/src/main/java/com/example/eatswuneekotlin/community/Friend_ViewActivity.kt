@@ -3,6 +3,7 @@ package com.example.eatswuneekotlin.community
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.opengl.Visibility
 import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +18,7 @@ import com.example.eatswuneekotlin.R
 import com.example.eatswuneekotlin.server.Result
 import com.example.eatswuneekotlin.server.chat.ChatActivity
 import com.example.eatswuneekotlin.server.chat.ChatListActivity
+import com.google.api.Distribution.BucketOptions.Linear
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -27,7 +29,7 @@ import java.net.URL
 class Friend_ViewActivity : AppCompatActivity() {
     var isWriter = false
     private var postId: Long = 0
-    private lateinit var user_id: String
+    private var user_id: Long = 0
 
     private lateinit var title: TextView
     private lateinit var spot: TextView
@@ -43,7 +45,11 @@ class Friend_ViewActivity : AppCompatActivity() {
     private lateinit var chat_btn: Button
     private lateinit var chat_list_btn: Button
 
+    private lateinit var status_spinner: Spinner
+    private lateinit var spinner_layout: LinearLayout
+
     val masterApp = MasterApplication()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,24 +81,86 @@ class Friend_ViewActivity : AppCompatActivity() {
         background = findViewById(R.id.friend_view_bottom_back)
         inside = findViewById(R.id.friend_view_bottom_in)
 
+        status_spinner = findViewById(R.id.spinner)
+        spinner_layout = findViewById(R.id.status_spinner)
+
+
         val intent = intent
         postId = intent.extras!!.getLong("recruitId")
 
         masterApp.createRetrofit(this@Friend_ViewActivity)
         val service = masterApp.serviceApi
 
-        service!!.profile.enqueue(object : Callback<Result?> {
-            override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
+        status_spinner.adapter = ArrayAdapter.createFromResource(this, R.array.spinner_array_status, android.R.layout.simple_spinner_dropdown_item)
+
+        service.getProfile().enqueue(object : Callback<Result> {
+            override fun onResponse(call: Call<Result>, response: Response<Result>) {
                 val result = response.body()
                 val data = result!!.data
-                user_id = data?.user_id!!
+                user_id = data.user_id
             }
 
-            override fun onFailure(call: Call<Result?>, t: Throwable) {}
+            override fun onFailure(call: Call<Result>, t: Throwable) {}
         })
 
         init(postId)
         chat_list_btn.setOnClickListener(chatListOnClickListener())
+
+        status_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                when (position) {
+                    // 찾는 중
+                    0 -> {
+                        var status = article_status(user_id, "ONGOING")
+                        service.editStatus(status).enqueue(object : Callback<Result> {
+                            override fun onResponse(
+                                call: Call<Result>,
+                                response: Response<Result>,
+                            ) {
+                            }
+                            override fun onFailure(call: Call<Result>, t: Throwable) {
+                            }
+
+                        })
+                    }
+
+                    // 연락 중
+                    1 -> {
+                        var status = article_status(user_id, "CONNECTING")
+                        service.editStatus(status).enqueue(object : Callback<Result> {
+                            override fun onResponse(
+                                call: Call<Result>,
+                                response: Response<Result>,
+                            ) {
+                            }
+                            override fun onFailure(call: Call<Result>, t: Throwable) {
+                            }
+
+                        })
+                    }
+
+                    // 구함
+                    2 -> {
+                        var status = article_status(user_id, "COMPLETED")
+                        service.editStatus(status).enqueue(object : Callback<Result> {
+                            override fun onResponse(
+                                call: Call<Result>,
+                                response: Response<Result>,
+                            ) {
+                            }
+                            override fun onFailure(call: Call<Result>, t: Throwable) {
+                            }
+
+                        })
+                    }
+                }
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+                TODO("Not yet implemented")
+            }
+
+        }
     }
 
     private fun init(postId: Long) {
@@ -105,45 +173,65 @@ class Friend_ViewActivity : AppCompatActivity() {
 
                 Log.d("retrofit", "Data fetch success")
 
-                val user_is_writer = data?.isUser_is_writer
-                if (user_is_writer == true) {
+                title.text = data.title
+
+                when (data.spot) {
+                    "gusia" -> { spot.text = "구시아" }
+                    "shalom" -> { spot.text = "샬롬" }
+                    "nuri" -> { spot.text = "누리관" }
+                    "fiftieth" -> { spot.text = "50주년" }
+                    "gyo" -> { spot.text = "교직원" }
+                }
+
+                time.text = data.start_time + " - " + data.end_time
+                created_at.text = data.created_at
+                content.text = data.content
+                name.text = data.writers.user_name
+
+                val user_is_writer = data.isUser_is_writer
+                if (user_is_writer) {
                     chat_list_btn!!.visibility = View.VISIBLE
                     background!!.visibility = View.GONE
                     invalidateOptionsMenu()
+
+                    status.visibility = View.GONE
+                    spinner_layout.visibility = View.VISIBLE
+
+                    when (data.recruit_status) {
+                        "ONGOING" -> status_spinner.setSelection(0)
+                        "CONNECTING" -> status_spinner.setSelection(1)
+                        "COMPLETED" -> status_spinner.setSelection(2)
+                    }
+
+                    DownloadFilesTask().execute(data?.writers?.user_profile_url)
+                } else {
+
+                    when (data?.recruit_status) {
+                        "ONGOING" -> {
+                            status!!.text = "찾는 중이군요!"
+                            status!!.setBackgroundResource(R.drawable.com_finding_chat_theme)
+                            background!!.setBackgroundColor(resources.getColor(R.color.finding))
+                            inside!!.setBackgroundResource(R.drawable.com_finding_theme_bottom_s)
+
+                        }
+                        "CONNECTING" -> {
+                            status!!.text = "연락 중이군요!"
+                            status!!.setBackgroundResource(R.drawable.com_talking_chat_theme)
+                            background!!.setBackgroundColor(resources.getColor(R.color.talking))
+                            inside!!.setBackgroundResource(R.drawable.com_talking_theme_bottom_s)
+
+                        }
+                        "COMPLETED" -> {
+                            status!!.text = "이미 구했군요!"
+                            status!!.setBackgroundResource(R.drawable.com_done_chat_theme)
+                            background!!.setBackgroundColor(resources.getColor(R.color.done))
+                            inside!!.setBackgroundResource(R.drawable.com_done_theme_bottom_s)
+
+                        }
+                    }
+
+                    DownloadFilesTask().execute(data?.writers?.user_profile_url)
                 }
-
-                title!!.text = data?.title
-                spot!!.text = data?.spot
-                time!!.text = data?.start_time + " - " + data?.end_time
-                created_at!!.text = data?.created_at
-                content!!.text = data?.content
-                name!!.text = data?.writers?.user_name
-
-                if (data?.recruit_status === "ONGOING") {
-
-                    status!!.text = "찾는 중이군요!"
-                    status!!.setBackgroundResource(R.drawable.com_finding_chat_theme)
-                    background!!.setBackgroundColor(resources.getColor(R.color.finding))
-                    inside!!.setBackgroundResource(R.drawable.com_finding_theme_bottom_s)
-
-                } else if (data?.recruit_status === "CONNECTING") {
-
-                    status!!.text = "연락 중이군요!"
-                    status!!.setBackgroundResource(R.drawable.com_talking_chat_theme)
-                    background!!.setBackgroundColor(resources.getColor(R.color.talking))
-                    inside!!.setBackgroundResource(R.drawable.com_talking_theme_bottom_s)
-
-                } else if (data?.recruit_status === "COMPLETED") {
-
-                    status!!.text = "이미 구했군요!"
-                    status!!.setBackgroundResource(R.drawable.com_done_chat_theme)
-                    background!!.setBackgroundColor(resources.getColor(R.color.done))
-                    inside!!.setBackgroundResource(R.drawable.com_done_theme_bottom_s)
-
-                }
-
-                // 이미지 주소가 안 되어있음 : 수정 필요
-                DownloadFilesTask().execute(data?.writers?.user_profile_url)
             }
 
             override fun onFailure(call: Call<Result?>, t: Throwable) {
@@ -236,7 +324,7 @@ class Friend_ViewActivity : AppCompatActivity() {
                             val intent = Intent(this@Friend_ViewActivity, ChatActivity::class.java)
                             intent.putExtra(
                                 "chatRoomId",
-                                java.lang.Long.valueOf(user_id + "0" + postId)
+                                java.lang.Long.valueOf("${user_id}0$postId")
                             )
                             startActivity(intent)
 

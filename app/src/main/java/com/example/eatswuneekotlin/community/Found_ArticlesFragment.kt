@@ -25,12 +25,17 @@ class Found_ArticlesFragment : Fragment() {
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var adapter: MyArticlesAdapter
 
-    private lateinit var activity: MainActivity
+    private lateinit var activity: articlesActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        activity = context as MainActivity
+        activity = context as articlesActivity
+    }
+
+    override fun onResume() {
+        super.onResume()
+        init("COMPLETED")
     }
 
     override fun onCreateView(

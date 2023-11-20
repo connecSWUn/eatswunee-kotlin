@@ -3,12 +3,13 @@ package com.example.eatswuneekotlin
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import com.example.eatswuneekotlin.server.ServiceApi
 import com.example.eatswuneekotlin.server.login.AuthInterceptor
 import com.example.eatswuneekotlin.server.login.TokenRefreshApi
+import com.example.eatswuneekotlin.server.login.Utils
 import com.facebook.stetho.Stetho
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
+import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -18,6 +19,7 @@ class MasterApplication : Application() {
     lateinit var serviceApi: ServiceApi
     private val baseUrl = "http://43.201.201.163:8080"
     private lateinit var activity : Activity
+
     override fun onCreate() {
         super.onCreate()
         Stetho.initializeWithDefaults(this)
@@ -30,12 +32,14 @@ class MasterApplication : Application() {
             val original = it.request()
             if (checkIsLogin()) {
                 getUserToken().let { token ->
+                    Log.d("createRetrofit token", token.toString())
                     val request = original.newBuilder()
                         .header("Authorization","Bearer $token")
                         .build()
                     it.proceed(request)
                 }
             } else {
+                Log.d("createRetrofit token", "실행")
                 it.proceed(original)
             }
         }
@@ -58,24 +62,29 @@ class MasterApplication : Application() {
         return Retrofit.Builder()
             .baseUrl("$baseUrl/")
             .client(client)
+            .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(TokenRefreshApi::class.java)
     }
+
 
     /** Retrofit Client 생성 함수
      * Build : okhttp client
      * Interceptor를 통한 request를 보냄
      */
     private fun getRetrofitClient(header: Interceptor): OkHttpClient {
+        val accessToken = Utils.getAccessToken("1234")
+
         return OkHttpClient.Builder()
-            .addInterceptor { chain ->
+            .addNetworkInterceptor { chain ->
                 chain.proceed(chain.request().newBuilder().also {
-                    it.addHeader("Accept", "application/json")
+                    it.addHeader("Authorization", "Bearer $accessToken")
                 }.build())
             }.also { client ->
                 client.addInterceptor(header)
                 client.addInterceptor(AuthInterceptor(activity, buildTokenApi()))
+
                 // 오류 관련 인터셉터도 등록 (오류 출력 가능)
                 val logInterceptor = HttpLoggingInterceptor()
                 logInterceptor.level = HttpLoggingInterceptor.Level.BODY
