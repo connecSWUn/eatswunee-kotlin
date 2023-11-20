@@ -1,6 +1,6 @@
 package com.example.eatswuneekotlin.server
 
-import com.example.eatswuneekotlin.bistro.orderMenuList
+import com.example.eatswuneekotlin.bistro.orderMenus
 import com.example.eatswuneekotlin.community.article
 import com.example.eatswuneekotlin.community.article_status
 import com.example.eatswuneekotlin.mypage.review_content
@@ -114,7 +114,7 @@ interface ServiceApi {
 
     /* 주문 */
     @POST("/gusia/order/save")
-    fun postOrder(@Body orderMenuList: orderMenuList): Call<Result>
+    fun postOrder(@Body orderMenus: orderMenus): Call<Result>
 
     @POST("/recruit/save")
     fun postArticle(@Body article: article): Call<Result>

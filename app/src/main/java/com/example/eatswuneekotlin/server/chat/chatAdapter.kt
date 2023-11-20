@@ -10,6 +10,7 @@ import com.example.eatswuneekotlin.R
 import com.example.eatswuneekotlin.server.messages
 
 class chatAdapter(
+
     private val user_name: String?,
     private val messagesList: List<messages>,
     var context: Context
@@ -47,7 +48,7 @@ class chatAdapter(
     }
 
     fun addChat(messages: messages?) {
-        messagesList!!.add(messages)
+        //messagesList!!.add(messages)
         notifyItemInserted(messagesList.size - 1)
     }
 
