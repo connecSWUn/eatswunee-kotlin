@@ -3,13 +3,9 @@ package com.example.eatswuneekotlin.server
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class messages(
-    @field:Expose @field:SerializedName("message_created_at") var message_created_at: String,
-    @field:Expose @field:SerializedName(
-        "message_sender"
-    ) var message_sender: String,
-    @field:Expose @field:SerializedName("message_content") var message_content: String,
-    @field:Expose @field:SerializedName(
-        "message_is_read"
-    ) var isMessage_is_read: Boolean
+data class messages(
+    @SerializedName("message_created_at") val message_created_at: String,
+    @SerializedName("message_sender") val message_sender: String,
+    @SerializedName("message_content") val message_content: String,
+    @SerializedName("message_is_read") val isMessage_is_read: Boolean
 )

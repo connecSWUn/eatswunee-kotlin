@@ -11,7 +11,7 @@ import com.example.eatswuneekotlin.server.messages
 
 class chatAdapter(
     private val user_name: String?,
-    private val messagesList: MutableList<messages?>?,
+    private val messagesList: List<messages>,
     var context: Context
 
 ) : RecyclerView.Adapter<chatAdapter.ViewHolder>() {

@@ -41,12 +41,12 @@ class orderFragment : Fragment() {
 
         //커스텀 어댑터 생성
         myPageAdapter = MyPageAdapter(childFragmentManager, tabLayout.getTabCount())
-        viewPager.setAdapter(myPageAdapter)
-        viewPager.setCurrentItem(tabCurrentIdx)
+        viewPager.adapter = myPageAdapter
+        viewPager.currentItem = tabCurrentIdx
         viewPager.addOnPageChangeListener(TabLayoutOnPageChangeListener(tabLayout))
         tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-                viewPager.setCurrentItem(tab.position)
+                viewPager.currentItem = tab.position
                 tabCurrentIdx = tab.position
             }
 

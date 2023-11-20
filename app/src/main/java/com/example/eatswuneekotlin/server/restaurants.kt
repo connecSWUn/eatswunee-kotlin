@@ -3,12 +3,7 @@ package com.example.eatswuneekotlin.server
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class restaurants {
-    @SerializedName("restaurantId")
-    @Expose
-    var restaurantId = 0
-
-    @SerializedName("restaurantName")
-    @Expose
-    var restaurantName: String? = null
-}
+data class restaurants (
+    @SerializedName("restaurantId") val restaurantId: Int,
+    @SerializedName("restaurantName") val restaurantName: String
+)

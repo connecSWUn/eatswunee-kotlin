@@ -72,7 +72,14 @@ class Friend_WriteActivity : AppCompatActivity() {
 
                     article_title.setText(data?.title)
                     article_content.setText(data?.content)
-                    spot!!.setSelection((spot!!.adapter as ArrayAdapter<*>).getPosition(data?.spot as Nothing?))
+
+                    when (data.spot) {
+                        "gusia" -> { spot.setSelection(1) }
+                        "shalom" -> { spot.setSelection(2) }
+                        "nuri" -> { spot.setSelection(4) }
+                        "fiftieth" -> { spot.setSelection(0) }
+                        "gyo" -> { spot.setSelection(3) }
+                    }
                     start_time_btn.text = data?.start_time
                     end_time_btn.text = data?.end_time
                     done.text = "수정"

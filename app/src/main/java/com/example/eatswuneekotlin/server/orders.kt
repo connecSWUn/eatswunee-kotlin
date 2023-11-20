@@ -2,29 +2,14 @@ package com.example.eatswuneekotlin.server
 
 import com.google.gson.annotations.SerializedName
 
-class orders {
+data class orders (
     /* 마이페이지 주문 목록 조회 */
-    @SerializedName("orderMenuId")
-    var orderMenuId: Long = 0
-
-    @SerializedName("orderCreatedAt")
-    var orderCreatedAt: String? = null
-
-    @SerializedName("restaurantName")
-    var restaurantName: String? = null
-
-    @SerializedName("menuName")
-    var menuName: String? = null
-
-    @SerializedName("menuTotalPrice")
-    var menuTotalPrice = 0
-
-    @SerializedName("menuPrice")
-    var menuPrice = 0
-
-    @SerializedName("menuCnt")
-    var menuCnt = 0
-
-    @SerializedName("userWriteReview")
-    var isUserWriteReview = false
-}
+    @SerializedName("orderMenuId") val orderMenuId: Long,
+    @SerializedName("orderCreatedAt") val orderCreatedAt: String,
+    @SerializedName("restaurantName") val restaurantName: String,
+    @SerializedName("menuName") val menuName: String,
+    @SerializedName("menuTotalPrice") val menuTotalPrice: Int,
+    @SerializedName("menuPrice") val menuPrice: Int,
+    @SerializedName("menuCnt") val menuCnt: Int,
+    @SerializedName("userWriteReview") val isUserWriteReview: Boolean
+)

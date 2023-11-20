@@ -7,10 +7,10 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
-import com.example.eatswuneekotlin.server.login.LoginBackendResponse
 import com.example.eatswuneekotlin.server.login.UserModel
-import com.example.eatswuneekotlin.MainActivity
+import com.example.eatswuneekotlin.server.login.Utils
 import com.google.android.material.textfield.TextInputEditText
+import com.example.eatswuneekotlin.server.Result
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -31,6 +31,8 @@ class LoginActivity : AppCompatActivity() {
         login_btn = findViewById(R.id.login_btn)
         join_btn = findViewById(R.id.register_button)
 
+        Utils.init(applicationContext)
+
         val masterApp = MasterApplication()
         masterApp.createRetrofit(this@LoginActivity)
 
@@ -42,26 +44,27 @@ class LoginActivity : AppCompatActivity() {
 
             val data = UserModel(id, pw)
 
-            service.userLogin(data).enqueue(object : Callback<LoginBackendResponse> {
-                override fun onResponse(
-                    call: Call<LoginBackendResponse>,
-                    response: Response<LoginBackendResponse>
-                ) {
+            service.userLogin(data).enqueue(object : Callback<Result> {
+                override fun onResponse(call: Call<Result>, response: Response<Result>) {
                     Log.d("로그인 통신 성공", response.toString())
                     Log.d("로그인 통신 성공", response.body().toString())
 
                     when (response.code()) {
                         200 -> {
+                            val result = response.body()
+                            val data = result?.data
+
+                            Utils.setAccessToken(data?.accessToken)
                             val intent = Intent(applicationContext, MainActivity::class.java)
                             startActivity(intent)
                             finish()
                         }
-                        405 -> Toast.makeText(this@LoginActivity, "로그인 정보가 올바르지 않습니다", Toast.LENGTH_SHORT).show()
+                        403 -> Toast.makeText(this@LoginActivity, "로그인 정보가 올바르지 않습니다", Toast.LENGTH_SHORT).show()
                         500 -> Toast.makeText(this@LoginActivity, "로그인 실패 : 서버 오류", Toast.LENGTH_SHORT).show()
                     }
                 }
 
-                override fun onFailure(call: Call<LoginBackendResponse>, t: Throwable) {
+                override fun onFailure(call: Call<Result>, t: Throwable) {
                     Log.d("로그인 통신 실패", t.message.toString())
                     Log.d("로그인 통신 실패", "fail")
                 }

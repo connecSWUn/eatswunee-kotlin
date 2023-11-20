@@ -71,8 +71,8 @@ class ChatListActivity : AppCompatActivity() {
 
         val service = masterApp.serviceApi
 
-        service.chatList.enqueue(object : Callback<Result?> {
-            override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
+        service.getChatList().enqueue(object : Callback<Result> {
+            override fun onResponse(call: Call<Result>, response: Response<Result>) {
                 val result = response.body()
                 val data = result?.data
 
@@ -80,7 +80,7 @@ class ChatListActivity : AppCompatActivity() {
                 mRecyclerView!!.adapter = adapter
             }
 
-            override fun onFailure(call: Call<Result?>, t: Throwable) {
+            override fun onFailure(call: Call<Result>, t: Throwable) {
                 t.printStackTrace()
             }
         })

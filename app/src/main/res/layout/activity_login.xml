@@ -94,7 +94,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button6" />
+        app:layout_constraintTop_toBottomOf="@+id/nick_duplicated" />
 
     <TextView
         android:id="@+id/textView10"
@@ -110,7 +110,7 @@
         app:layout_constraintTop_toBottomOf="@+id/login_btn" />
 
     <Button
-        android:id="@+id/button6"
+        android:id="@+id/nick_duplicated"
         android:layout_width="330dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

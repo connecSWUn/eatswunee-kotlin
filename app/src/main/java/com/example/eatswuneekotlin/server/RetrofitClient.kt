@@ -1,23 +1,15 @@
 package com.example.eatswuneekotlin.server
 
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class RetrofitClient {
+    val BASE_URL = "http://43.201.201.163:8080"
 
-    companion object {
-        @JvmStatic
-        var instance: RetrofitClient? = null
-            get() {
-                if (field == null) {
-                    field = RetrofitClient()
-                }
-                return field
-            }
-            private set
-        private val retrofit: Retrofit? = null
-        @JvmStatic
-        lateinit var serviceApi: ServiceApi
-            private set
-        private const val baseUrl = "http://43.201.201.163:8080"
+    fun getApiClient() : Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
 }

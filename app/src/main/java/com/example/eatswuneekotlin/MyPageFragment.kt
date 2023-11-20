@@ -92,8 +92,8 @@ class MyPageFragment : Fragment() {
 
         val service = masterApp.serviceApi
 
-        service!!.profile.enqueue(object : Callback<Result?> {
-            override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
+        service.getProfile().enqueue(object : Callback<Result> {
+            override fun onResponse(call: Call<Result>, response: Response<Result>) {
                 val result = response.body()
                 val data = result!!.data
                 Log.d("retrofit", "Data fetch success")
@@ -102,7 +102,7 @@ class MyPageFragment : Fragment() {
                 DownloadFilesTask().execute(data.user_profile_url)
             }
 
-            override fun onFailure(call: Call<Result?>, t: Throwable) {
+            override fun onFailure(call: Call<Result>, t: Throwable) {
                 t.printStackTrace()
             }
         })

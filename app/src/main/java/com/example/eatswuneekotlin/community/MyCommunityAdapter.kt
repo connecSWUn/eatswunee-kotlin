@@ -58,18 +58,26 @@ class MyCommunityAdapter(private val items: List<Post>) :
 
         fun setItem(item: Post) {
             title.text = item.title
-            place.text = item.spot
+
+            when (item.spot) {
+                "gusia" -> { place.text = "구시아" }
+                "shalom" -> { place.text = "샬롬" }
+                "nuri" -> { place.text = "누리관" }
+                "fiftieth" -> { place.text = "50주년" }
+                "gyo" -> { place.text = "교직원" }
+            }
+            //place.text = item.spot
             app_time.text = item.startTime + " - " + item.endTime
             post_date.text = item.createdAt
-            if (item.recruitStatus === "ONGOING") {
+            if (item.recruitStatus == "ONGOING") {
                 status.text = "찾는 중..."
                 statusImg.setImageResource(R.drawable.baseline_search_24)
                 status.setBackgroundResource(R.drawable.community_state_finding)
-            } else if (item.recruitStatus === "CONNECTING") {
+            } else if (item.recruitStatus == "CONNECTING") {
                 status.text = "연락 중..."
                 statusImg.setImageResource(R.drawable.baseline_question_answer_24)
                 status.setBackgroundResource(R.drawable.community_state_talking)
-            } else if (item.recruitStatus === "COMPLETED") {
+            } else if (item.recruitStatus == "COMPLETED") {
                 status.text = "구했어요!"
                 statusImg.setImageResource(R.drawable.baseline_handshake_24)
                 status.setBackgroundResource(R.drawable.community_state_done)
