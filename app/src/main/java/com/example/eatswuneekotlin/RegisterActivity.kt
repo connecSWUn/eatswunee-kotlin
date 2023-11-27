@@ -18,6 +18,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+
 class RegisterActivity : AppCompatActivity() {
     private lateinit var idInput: EditText
     private lateinit var passwordInput: EditText
@@ -28,6 +29,8 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var is_nickname_duplicated: Button
     private lateinit var registerBtn: Button
     private lateinit var loginBtn: Button
+
+    private lateinit var retrofitClient: RetrofitClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,7 +81,7 @@ class RegisterActivity : AppCompatActivity() {
                     val name = nickname.text.toString()
                     val account = AccountRegisterDto(id, name, pw)
 
-                    service!!.postRegister(account)!!.enqueue(object : Callback<Result> {
+                    service.postRegister(account).enqueue(object : Callback<Result> {
                         override fun onResponse(call: Call<Result>, response: Response<Result>) {
                             if (!response.isSuccessful) {
                                 Log.e("연결이 비정상적 : ", "error code : " + response.code())
@@ -105,7 +108,7 @@ class RegisterActivity : AppCompatActivity() {
                 return@OnClickListener
             } else {
                 val loginId = idInput.text.toString()
-                service!!.isIdDuplicated(loginId)!!.enqueue(object : Callback<Result?> {
+                service.isIdDuplicated(loginId).enqueue(object : Callback<Result?> {
                     override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
                         val result = response.body()
                         val data = result!!.data
@@ -130,12 +133,12 @@ class RegisterActivity : AppCompatActivity() {
                 return@OnClickListener
             } else {
                 val name = nickname.text.toString()
-                service!!.isNicknameDuplicated(name)!!.enqueue(object : Callback<Result?> {
+                service.isNicknameDuplicated(name).enqueue(object : Callback<Result?> {
                     override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
                         val result = response.body()
                         val data = result!!.data
 
-                        if (data!!.isIs_duplicated) {
+                        if (data.isIs_duplicated) {
                             Toast.makeText(this@RegisterActivity, "이미 존재하는 닉네임입니다.", Toast.LENGTH_SHORT).show()
                         } else {
                             is_nickname_duplicated.setBackgroundResource(R.drawable.order_list_btn_unclickable)

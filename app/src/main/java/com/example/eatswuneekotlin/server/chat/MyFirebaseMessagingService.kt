@@ -98,8 +98,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setPriority(NotificationCompat.PRIORITY_HIGH) // 중요도 (HIGH: 상단바 표시 가능)
            .setSmallIcon(R.drawable.eatswu_logo) // 아이콘 설정
-            .setContentTitle(remoteMessage.data["title"].toString()) // 제목
-            .setContentText(remoteMessage.data["body"].toString()) // 메세지 내용
+            .setContentTitle(remoteMessage.notification.toString()) // 제목
+            .setContentText(remoteMessage.notification.toString()) // 메세지 내용
             .setAutoCancel(true) // 알림 클릭 시 삭제 여부
             // .setSound(SoundUri) // 알림 소리
             .setContentIntent(pendingIntent) // 알림 실행 시 Intent

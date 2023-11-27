@@ -197,6 +197,8 @@ class Friend_ViewActivity : AppCompatActivity() {
                     status.visibility = View.GONE
                     spinner_layout.visibility = View.VISIBLE
 
+                    chat_list_btn.text = "채팅 목록 (${data.chat_room_number})"
+
                     when (data.recruit_status) {
                         "ONGOING" -> status_spinner.setSelection(0)
                         "CONNECTING" -> status_spinner.setSelection(1)

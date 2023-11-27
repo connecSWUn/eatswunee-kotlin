@@ -24,6 +24,8 @@ class Friend_WriteActivity : AppCompatActivity() {
     private lateinit var done: Button
     private lateinit var cancel: Button
 
+    private lateinit var edit: Button
+
     private lateinit var article_title: EditText
     private lateinit var article_content: EditText
 
@@ -55,6 +57,9 @@ class Friend_WriteActivity : AppCompatActivity() {
         article_title = findViewById(R.id.editText_title)
         article_content = findViewById(R.id.write_content)
 
+        edit = findViewById(R.id.button_edit)
+        edit.setOnClickListener(editBtnOnClickListener())
+
         done.setOnClickListener(doneBtnOnClickListener())
         start_time_btn.setOnClickListener(startOnClickListener())
         end_time_btn.setOnClickListener(endOnClickListener())
@@ -62,6 +67,8 @@ class Friend_WriteActivity : AppCompatActivity() {
         val intent = intent
         if (intent.extras!!.getBoolean("edit")) {
             val postId = intent.extras!!.getLong("postId")
+            done.visibility = View.GONE
+            edit.visibility = View.VISIBLE
 
             service.getData("recruit", postId)?.enqueue(object : Callback<Result?> {
                 override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
@@ -71,6 +78,8 @@ class Friend_WriteActivity : AppCompatActivity() {
                     Log.d("retrofit", "Data fetch success")
 
                     article_title.setText(data?.title)
+                    article_title.isEnabled = false
+
                     article_content.setText(data?.content)
 
                     when (data.spot) {
@@ -80,9 +89,12 @@ class Friend_WriteActivity : AppCompatActivity() {
                         "fiftieth" -> { spot.setSelection(0) }
                         "gyo" -> { spot.setSelection(3) }
                     }
+                    spot.isEnabled = false
+
                     start_time_btn.text = data?.start_time
                     end_time_btn.text = data?.end_time
-                    done.text = "수정"
+                    start_time_btn.isEnabled = false
+                    end_time_btn.isEnabled = false
                 }
 
                 override fun onFailure(call: Call<Result?>, t: Throwable) {
@@ -91,6 +103,41 @@ class Friend_WriteActivity : AppCompatActivity() {
             })
         }
         cancel.setOnClickListener { finish() }
+    }
+
+    inner class editBtnOnClickListener : View.OnClickListener {
+        override fun onClick(p0: View?) {
+            val postId = intent.extras!!.getLong("postId")
+            content = article_content!!.text.toString()
+
+            val articleEdit = article_edit(postId, content)
+
+            val service = masterApp.serviceApi
+
+            service.editContent(articleEdit).enqueue(object : Callback<Result> {
+                override fun onResponse(call: Call<Result>, response: Response<Result>) {
+                    when(response.code()) {
+                        200 -> {
+                            Toast.makeText(this@Friend_WriteActivity, "수정되었습니다.", Toast.LENGTH_SHORT).show()
+                            val intent =
+                                Intent(this@Friend_WriteActivity, Friend_ViewActivity::class.java)
+                            intent.putExtra("recruitId", postId)
+                            startActivity(intent)
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<Result>, t: Throwable) {
+                    t.printStackTrace()
+                    Toast.makeText(this@Friend_WriteActivity, "다시 시도해 주세요.", Toast.LENGTH_SHORT).show()
+                }
+
+            })
+
+            finish()
+            overridePendingTransition(0, 0)
+        }
+
     }
 
     inner class doneBtnOnClickListener : View.OnClickListener {
@@ -112,8 +159,8 @@ class Friend_WriteActivity : AppCompatActivity() {
 
             val service = masterApp.serviceApi
 
-            service!!.postArticle(article)?.enqueue(object : Callback<Result?> {
-                override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
+            service.postArticle(article).enqueue(object : Callback<Result> {
+                override fun onResponse(call: Call<Result>, response: Response<Result>) {
                     if (response.isSuccessful) {
                         val result = response.body()
 
@@ -133,7 +180,7 @@ class Friend_WriteActivity : AppCompatActivity() {
                     }
                 }
 
-                override fun onFailure(call: Call<Result?>, t: Throwable) {
+                override fun onFailure(call: Call<Result>, t: Throwable) {
                     t.printStackTrace()
                     Toast.makeText(
                         this@Friend_WriteActivity,
