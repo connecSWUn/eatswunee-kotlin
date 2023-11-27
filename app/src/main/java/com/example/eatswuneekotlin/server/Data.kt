@@ -87,5 +87,8 @@ data class Data (
     @SerializedName("chatRooms") val chatRoomsList: List<chatRooms>,
 
     /* 중복 확인 */
-    @SerializedName("is_duplicated") val isIs_duplicated: Boolean
+    @SerializedName("is_duplicated") val isIs_duplicated: Boolean,
+
+    /* 존재하는 채팅방 개수 */
+    @SerializedName("chat_room_number") val chat_room_number: String,
 )

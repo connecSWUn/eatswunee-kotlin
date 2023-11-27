@@ -55,11 +55,11 @@ class MyReviewAdapter(private val reviewsList: List<reviews>) :
             context.text = reviews.reviewContent
             date.text = reviews.createdAt
             star_rate.rating = reviews.menuRating.toFloat()
-            DownloadFilesTask().execute(reviews.writer?.profileUrl)
-            DownloadFilesTask().execute(reviews.reviewImgsList?.get(0))
+            ProfileDownloadFilesTask().execute(reviews.writer?.profileUrl)
+            ReviewDownloadFilesTask().execute(reviews.reviewImgsList?.get(0))
         }
 
-        internal inner class DownloadFilesTask : AsyncTask<String?, Void?, Bitmap?>() {
+        internal inner class ProfileDownloadFilesTask : AsyncTask<String?, Void?, Bitmap?>() {
             override fun doInBackground(vararg strings: String?): Bitmap? {
                 var bmp: Bitmap? = null
                 try {
@@ -80,6 +80,30 @@ class MyReviewAdapter(private val reviewsList: List<reviews>) :
 
             override fun onPostExecute(result: Bitmap?) {
                 profile!!.setImageBitmap(result)
+            }
+        }
+
+        internal inner class ReviewDownloadFilesTask : AsyncTask<String?, Void?, Bitmap?>() {
+            override fun doInBackground(vararg strings: String?): Bitmap? {
+                var bmp: Bitmap? = null
+                try {
+                    val img_url = strings[0] //url of the image
+                    val url = URL(img_url)
+                    bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+                } catch (e: MalformedURLException) {
+                    e.printStackTrace()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+                return bmp
+            }
+
+            override fun onPreExecute() {
+                super.onPreExecute()
+            }
+
+            override fun onPostExecute(result: Bitmap?) {
+                review_photo!!.setImageBitmap(result)
             }
         }
     }

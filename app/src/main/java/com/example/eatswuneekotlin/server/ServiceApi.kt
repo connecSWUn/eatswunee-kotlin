@@ -2,6 +2,7 @@ package com.example.eatswuneekotlin.server
 
 import com.example.eatswuneekotlin.bistro.orderMenus
 import com.example.eatswuneekotlin.community.article
+import com.example.eatswuneekotlin.community.article_edit
 import com.example.eatswuneekotlin.community.article_status
 import com.example.eatswuneekotlin.mypage.review_content
 import com.example.eatswuneekotlin.server.login.UserModel
@@ -90,6 +91,10 @@ interface ServiceApi {
     /* 게시글 상태 수정 */
     @POST("/recruit/edit")
     fun editStatus(@Body articleStatus: article_status): Call<Result>
+
+    /* 게시글 내용 수정 */
+    @POST("/recruit/edit/content")
+    fun editContent(@Body articleEdit: article_edit): Call<Result>
 
     /* 리뷰 */
     @DELETE("/mypage/review/delete/{reviewId}")
