@@ -45,6 +45,11 @@ class MainActivity : AppCompatActivity() {
     lateinit var nav_header_text: TextView
     lateinit var nav_header_image: ImageView
 
+    override fun onResume() {
+        super.onResume()
+        init()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)

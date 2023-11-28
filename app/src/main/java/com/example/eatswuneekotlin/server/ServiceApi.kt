@@ -107,7 +107,7 @@ interface ServiceApi {
     @DELETE("/mypage/review/delete/{reviewId}")
     fun reviewDelete(@Path("reviewId") reviewId: Long): Call<Result>
 
-    @DELETE("/mypage/review/save")
+    @POST("/mypagae/review/save")
     fun postReview(@Body review_content: review_content): Call<Result>
 
     /* 로그인 */

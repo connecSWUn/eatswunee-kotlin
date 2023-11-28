@@ -158,6 +158,12 @@ class profile_editActivity : AppCompatActivity() {
                                 response: Response<Result>,
                             ) {
                                 Toast.makeText(this@profile_editActivity, "저장되었습니다.", Toast.LENGTH_SHORT).show()
+
+                                val intent = intent
+                                finish()
+                                overridePendingTransition(0, 0)
+                                startActivity(intent)
+                                overridePendingTransition(0, 0)
                             }
 
                             override fun onFailure(call: Call<Result>, t: Throwable) {
@@ -326,6 +332,12 @@ class profile_editActivity : AppCompatActivity() {
 
                                 Log.d("upload", data?.isIs_duplicated.toString())
                                 Toast.makeText(this@profile_editActivity, "등록되었습니다.", Toast.LENGTH_SHORT).show()
+
+                                val intent = intent
+                                finish()
+                                overridePendingTransition(0, 0)
+                                startActivity(intent)
+                                overridePendingTransition(0, 0)
                             }
 
                             override fun onFailure(call: Call<Result>, t: Throwable) {
@@ -351,6 +363,12 @@ class profile_editActivity : AppCompatActivity() {
 
                                 Log.d("upload", data?.isIs_duplicated.toString())
                                 Toast.makeText(this@profile_editActivity, "등록되었습니다.", Toast.LENGTH_SHORT).show()
+
+                                val intent = intent
+                                finish()
+                                overridePendingTransition(0, 0)
+                                startActivity(intent)
+                                overridePendingTransition(0, 0)
                             }
 
                             override fun onFailure(call: Call<Result>, t: Throwable) {

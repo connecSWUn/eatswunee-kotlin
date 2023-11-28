@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 data class article_edit (
     @SerializedName("recruitId") val recruitId: Long,
-    @SerializedName("recruit_content") val recruit_content: String,
+    @SerializedName("recruitContent") val recruit_content: String,
 )

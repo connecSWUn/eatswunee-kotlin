@@ -100,7 +100,6 @@
                     android:layout_width="33dp"
                     android:layout_height="30dp"
                     android:background="#00ff0000"
-                    android:text="x"
                     android:textColor="#8E3B0B"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="parent" />

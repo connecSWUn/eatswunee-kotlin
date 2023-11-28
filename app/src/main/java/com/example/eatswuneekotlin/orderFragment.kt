@@ -17,7 +17,6 @@ class orderFragment : Fragment() {
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager
     private var tabCurrentIdx = 0
-    lateinit var search_bar: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -26,7 +26,6 @@ class CommunityFragment : Fragment() {
     lateinit var nuri: Button
     lateinit var fiftieth: Button
     lateinit var shalom: Button
-    lateinit var gyo: Button
 
     private lateinit var writeBtn: Button
     lateinit var v: View
@@ -61,7 +60,6 @@ class CommunityFragment : Fragment() {
         nuri = v.findViewById(R.id.community_nuri)
         fiftieth = v.findViewById(R.id.community_50th)
         shalom = v.findViewById(R.id.community_shalom)
-        gyo = v.findViewById(R.id.community_gyo)
         writeBtn = v.findViewById(R.id.write_button)
 
         /* 초기 세팅
@@ -72,7 +70,6 @@ class CommunityFragment : Fragment() {
         nuri.isSelected = false
         fiftieth.isSelected = false
         shalom.isSelected = false
-        gyo.isSelected = false
         init("ALL")
 
         /* 커뮤니티 버튼 리스너 */
@@ -81,7 +78,6 @@ class CommunityFragment : Fragment() {
         nuri.setOnClickListener(nuriOnClickListener())
         fiftieth.setOnClickListener(fiftiethOnClickListener())
         shalom.setOnClickListener(shalomOnClickListener())
-        gyo.setOnClickListener(gyoOnClickListener())
 
         /* 글 쓰기 버튼 리스너 */
         writeBtn.setOnClickListener(writeOnClickListener())
@@ -148,7 +144,6 @@ class CommunityFragment : Fragment() {
             nuri!!.isSelected = false
             fiftieth!!.isSelected = false
             shalom!!.isSelected = false
-            gyo!!.isSelected = false
             init("ALL")
         }
     }
@@ -160,7 +155,6 @@ class CommunityFragment : Fragment() {
             nuri!!.isSelected = false
             fiftieth!!.isSelected = false
             shalom!!.isSelected = false
-            gyo!!.isSelected = false
             init("gusia")
         }
     }
@@ -172,7 +166,6 @@ class CommunityFragment : Fragment() {
             nuri!!.isSelected = true
             fiftieth!!.isSelected = false
             shalom!!.isSelected = false
-            gyo!!.isSelected = false
             init("nuri")
         }
     }
@@ -184,7 +177,6 @@ class CommunityFragment : Fragment() {
             nuri!!.isSelected = false
             fiftieth!!.isSelected = true
             shalom!!.isSelected = false
-            gyo!!.isSelected = false
             init("fiftieth")
         }
     }
@@ -196,21 +188,7 @@ class CommunityFragment : Fragment() {
             nuri!!.isSelected = false
             fiftieth!!.isSelected = false
             shalom!!.isSelected = true
-            gyo!!.isSelected = false
             init("shalom")
-        }
-    }
-
-    private inner class gyoOnClickListener : View.OnClickListener {
-        override fun onClick(view: View) {
-            total!!.isSelected = false
-            gusia!!.isSelected = false
-            nuri!!.isSelected = false
-            fiftieth!!.isSelected = false
-            shalom!!.isSelected = false
-            gyo!!.isSelected = true
-
-            init("gyo");
         }
     }
 }
