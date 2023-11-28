@@ -30,7 +30,6 @@ import java.net.URL
 class MyPageFragment : Fragment() {
     private lateinit var listBtn: Button
     lateinit var reviewBtn: Button
-    private lateinit var settingBtn: Button
     private lateinit var profileBtn: LinearLayout
     private lateinit var name: TextView
     private lateinit var img: ImageView
@@ -46,6 +45,11 @@ class MyPageFragment : Fragment() {
         super.onCreate(savedInstanceState)
     }
 
+    override fun onResume() {
+        super.onResume()
+        init()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -58,7 +62,6 @@ class MyPageFragment : Fragment() {
         img = v.findViewById(R.id.profile_img)
         listBtn = v.findViewById(R.id.list_btn)
         reviewBtn = v.findViewById(R.id.review_btn)
-        settingBtn = v.findViewById(R.id.setting_btn)
 
         init()
 
@@ -74,11 +77,6 @@ class MyPageFragment : Fragment() {
 
         reviewBtn.setOnClickListener(View.OnClickListener {
             val intent = Intent(activity, MyReviewActivity::class.java)
-            startActivity(intent)
-        })
-
-        settingBtn.setOnClickListener(View.OnClickListener {
-            val intent = Intent(activity, settingActivity::class.java)
             startActivity(intent)
         })
 

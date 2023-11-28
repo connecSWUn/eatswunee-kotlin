@@ -54,7 +54,7 @@
 
                 <Button
                     android:id="@+id/community_totalBtn"
-                    android:layout_width="50dp"
+                    android:layout_width="70dp"
                     android:layout_height="35dp"
                     android:layout_marginRight="4dp"
                     android:background="@drawable/community_button"
@@ -65,7 +65,7 @@
 
                 <Button
                     android:id="@+id/community_gusia"
-                    android:layout_width="60dp"
+                    android:layout_width="70dp"
                     android:layout_height="35dp"
                     android:layout_marginRight="4dp"
                     android:layout_weight="1"
@@ -77,7 +77,7 @@
 
                 <Button
                     android:id="@+id/community_nuri"
-                    android:layout_width="60dp"
+                    android:layout_width="70dp"
                     android:layout_height="35dp"
                     android:layout_marginRight="4dp"
                     android:background="@drawable/community_button"
@@ -88,7 +88,7 @@
 
                 <Button
                     android:id="@+id/community_shalom"
-                    android:layout_width="50dp"
+                    android:layout_width="70dp"
                     android:layout_height="35dp"
                     android:layout_marginRight="4dp"
                     android:layout_weight="1"
@@ -100,7 +100,7 @@
 
                 <Button
                     android:id="@+id/community_50th"
-                    android:layout_width="65dp"
+                    android:layout_width="70dp"
                     android:layout_height="35dp"
                     android:layout_marginRight="4dp"
                     android:background="@drawable/community_button"
@@ -109,16 +109,6 @@
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
-                <Button
-                    android:id="@+id/community_gyo"
-                    android:layout_width="60dp"
-                    android:layout_height="35dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/community_button"
-                    android:text="교직원"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
             </LinearLayout>
         </HorizontalScrollView>
 

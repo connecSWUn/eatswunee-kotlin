@@ -120,6 +120,7 @@ class articlesActivity : AppCompatActivity() {
 
                 Log.d("retrofit", "Data fetch success")
                 nickname!!.text = data?.user_name
+                cnt.text = "전체 글 (${data?.postTotalCnt})"
                 DownloadFilesTask().execute(data?.user_profile_url)
             }
 

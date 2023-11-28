@@ -157,8 +157,6 @@ class ShopBagActivity : AppCompatActivity(),  ShopBagAdapter.ShopBagAdapterListe
     }
 
     override fun onCntPlusClicked(position: Int) {
-        // RecyclerView Adapter에서 cnt_plus 버튼 클릭 시 액티비티에서 해야 할 작업 구현
-        // 예를 들어, 액티비티 재시작 등
         val intent = intent
         finish()
         overridePendingTransition(0, 0)

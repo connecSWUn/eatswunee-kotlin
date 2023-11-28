@@ -37,13 +37,11 @@ class Friend_WriteActivity : AppCompatActivity() {
 
     private val writer_id: Long = 1
 
-    val masterApp = MasterApplication()
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friend_write)
 
+        val masterApp = MasterApplication()
         masterApp.createRetrofit(this@Friend_WriteActivity)
         val service = masterApp.serviceApi
 
@@ -59,8 +57,8 @@ class Friend_WriteActivity : AppCompatActivity() {
         edit.setOnClickListener(editBtnOnClickListener())
 
         done.setOnClickListener(doneBtnOnClickListener())
-        start_time_btn.setOnClickListener(startOnClickListener())
-        end_time_btn.setOnClickListener(endOnClickListener())
+        start_time_btn.setOnClickListener(TimeOnClickListener(true))
+        end_time_btn.setOnClickListener(TimeOnClickListener(false))
 
         val intent = intent
         if (intent.extras!!.getBoolean("edit")) {
@@ -85,7 +83,6 @@ class Friend_WriteActivity : AppCompatActivity() {
                         "shalom" -> { spot.setSelection(2) }
                         "nuri" -> { spot.setSelection(4) }
                         "fiftieth" -> { spot.setSelection(0) }
-                        "gyo" -> { spot.setSelection(3) }
                     }
                     spot.isEnabled = false
 
@@ -109,6 +106,9 @@ class Friend_WriteActivity : AppCompatActivity() {
             content = article_content!!.text.toString()
 
             val articleEdit = article_edit(postId, content)
+
+            val masterApp = MasterApplication()
+            masterApp.createRetrofit(this@Friend_WriteActivity)
 
             val service = masterApp.serviceApi
 
@@ -146,14 +146,20 @@ class Friend_WriteActivity : AppCompatActivity() {
             end_time = end_time_btn!!.text.toString()
             content = article_content!!.text.toString()
 
-            if (spot!!.selectedItem.toString() === "구시아") recruit_spot = "gusia"
-            else if (spot!!.selectedItem.toString() === "50주년") recruit_spot = "fiftieth"
-            else if (spot!!.selectedItem.toString() === "누리관") recruit_spot = "nuri"
-            else if (spot!!.selectedItem.toString() === "샬롬") recruit_spot = "shalom"
-            else if (spot!!.selectedItem.toString() === "교직원") recruit_spot = "gyo"
+            val spotSelectedItem = spot.selectedItem.toString()
+            recruit_spot = when (spotSelectedItem) {
+                "구시아" -> "gusia"
+                "50주년" -> "fiftieth"
+                "누리관" -> "nuri"
+                "샬롬" -> "shalom"
+                else -> ""
+            }
 
             val article =
-                article(title!!, recruitStatus!!, start_time!!, end_time!!, recruit_spot, content!!)
+                article(title, recruitStatus, start_time, end_time, recruit_spot, content)
+
+            val masterApp = MasterApplication()
+            masterApp.createRetrofit(this@Friend_WriteActivity)
 
             val service = masterApp.serviceApi
 
@@ -194,7 +200,7 @@ class Friend_WriteActivity : AppCompatActivity() {
         }
     }
 
-    private inner class startOnClickListener : View.OnClickListener {
+    private inner class TimeOnClickListener(private val isStartTime: Boolean) : View.OnClickListener {
         override fun onClick(view: View) {
             val octDialog = TimePickerPopupDialogTwoButton(
                 this@Friend_WriteActivity,
@@ -204,9 +210,16 @@ class Friend_WriteActivity : AppCompatActivity() {
                             TAG,
                             "onPositiveClick : " + setHourValue + "시 " + setMinuteValue + "분"
                         )
-                        if (setMinuteValue < 10) start_time_btn!!.text =
-                            "$setHourValue:0$setMinuteValue" else start_time_btn!!.text =
+                        val formattedTime = if (setMinuteValue < 10) {
+                            "$setHourValue:0$setMinuteValue"
+                        } else {
                             "$setHourValue:$setMinuteValue"
+                        }
+                        if (isStartTime) {
+                            start_time_btn?.text = formattedTime
+                        } else {
+                            end_time_btn?.text = formattedTime
+                        }
                     }
 
                     override fun onNegativeClick() {
@@ -216,41 +229,13 @@ class Friend_WriteActivity : AppCompatActivity() {
 
             octDialog.setCanceledOnTouchOutside(false)
             octDialog.setCancelable(true)
-            octDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            octDialog.window!!.requestFeature(Window.FEATURE_NO_TITLE)
-            octDialog.show()
-        }
-    }
-
-    private inner class endOnClickListener : View.OnClickListener {
-        override fun onClick(view: View) {
-            val octDialog = TimePickerPopupDialogTwoButton(
-                this@Friend_WriteActivity,
-                object : TimePickerPopupDialogClickListener {
-                    override fun onPositiveClick(setHourValue: Int, setMinuteValue: Int) {
-                        Log.d(
-                            TAG,
-                            "onPositiveClick : " + setHourValue + "시 " + setMinuteValue + "분"
-                        )
-                        if (setMinuteValue < 10) end_time_btn!!.text =
-                            "$setHourValue:0$setMinuteValue" else end_time_btn!!.text =
-                            "$setHourValue:$setMinuteValue"
-                    }
-
-                    override fun onNegativeClick() {
-                        Log.d(TAG, "No click")
-                    }
-                })
-
-            octDialog.setCanceledOnTouchOutside(false)
-            octDialog.setCancelable(true)
-            octDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            octDialog.window!!.requestFeature(Window.FEATURE_NO_TITLE)
+            octDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            octDialog.window?.requestFeature(Window.FEATURE_NO_TITLE)
             octDialog.show()
         }
     }
 
     companion object {
-        var TAG: String? = null
+        var TAG: String = "Dialog"
     }
 }
