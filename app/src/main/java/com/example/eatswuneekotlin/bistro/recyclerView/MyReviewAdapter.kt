@@ -56,7 +56,12 @@ class MyReviewAdapter(private val reviewsList: List<reviews>) :
             date.text = reviews.createdAt
             star_rate.rating = reviews.menuRating.toFloat()
             ProfileDownloadFilesTask().execute(reviews.writer?.profileUrl)
-            ReviewDownloadFilesTask().execute(reviews.reviewImgsList?.get(0))
+
+            if(reviews.reviewImgsList?.get(0) == null){
+                review_photo.visibility = View.GONE
+            } else {
+                ReviewDownloadFilesTask().execute(reviews.reviewImgsList?.get(0))
+            }
         }
 
         internal inner class ProfileDownloadFilesTask : AsyncTask<String?, Void?, Bitmap?>() {

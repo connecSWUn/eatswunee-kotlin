@@ -12,15 +12,12 @@ import androidx.appcompat.widget.Toolbar
 import com.example.eatswuneekotlin.MasterApplication
 import com.example.eatswuneekotlin.R
 import com.example.eatswuneekotlin.server.Result
-import com.example.eatswuneekotlin.server.RetrofitClient
-import com.example.eatswuneekotlin.server.ServiceApi
 import com.example.eatswuneekotlin.server.sqlite.DBManager
 import com.example.eatswuneekotlin.ShopBagActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.IOException
-import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
 

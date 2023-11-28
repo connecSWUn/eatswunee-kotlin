@@ -71,7 +71,7 @@ class LoginActivity : AppCompatActivity() {
             })
         }
 
-        join_btn.setOnClickListener{
+        join_btn.setOnClickListener {
             val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
             startActivity(intent)
             finish()

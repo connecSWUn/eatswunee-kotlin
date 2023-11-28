@@ -50,6 +50,7 @@ data class Data (
     @SerializedName("reviews") val reviewsList: List<reviews>,
 
     /* 주문 내역 조회 */
+    @SerializedName("order_id") val order_id: Long,
     @SerializedName("orders") val ordersList: List<orders>,
     @SerializedName("order_num") val order_num: String,
     @SerializedName("order_created_at") val order_created_at: String,
@@ -91,4 +92,5 @@ data class Data (
 
     /* 존재하는 채팅방 개수 */
     @SerializedName("chat_room_number") val chat_room_number: String,
+
 )

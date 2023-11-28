@@ -12,7 +12,7 @@ import com.example.eatswuneekotlin.server.messages
 class chatAdapter(
 
     private val user_name: String?,
-    private val messagesList: List<messages>,
+    private val messagesList: MutableList<messages>,
     var context: Context
 
 ) : RecyclerView.Adapter<chatAdapter.ViewHolder>() {
@@ -47,8 +47,8 @@ class chatAdapter(
         return messagesList!!.size
     }
 
-    fun addChat(messages: messages?) {
-        //messagesList!!.add(messages)
+    fun addChat(messages: messages) {
+        messagesList!!.add(messages)
         notifyItemInserted(messagesList.size - 1)
     }
 

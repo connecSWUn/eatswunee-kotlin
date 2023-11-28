@@ -22,7 +22,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ShopBagActivity : AppCompatActivity() {
+class ShopBagActivity : AppCompatActivity(),  ShopBagAdapter.ShopBagAdapterListener {
     private lateinit var dbManager: DBManager
 
     var bags = ArrayList<shop_bag>()
@@ -63,10 +63,9 @@ class ShopBagActivity : AppCompatActivity() {
 
         // recyclerView setting
         recyclerView = findViewById(R.id.shopbag_RecyclerView)
-        adapter = ShopBagAdapter(this@ShopBagActivity)
-        recyclerView.adapter = adapter
         recyclerView.layoutManager = (LinearLayoutManager(this))
-        recyclerView.layoutManager = (LinearLayoutManager(this, RecyclerView.VERTICAL, false))
+        adapter = ShopBagAdapter(this, this)
+        recyclerView!!.adapter = adapter
 
         // dbManager setting
         dbManager = DBManager(this@ShopBagActivity)
@@ -96,6 +95,16 @@ class ShopBagActivity : AppCompatActivity() {
                         override fun onResponse(call: Call<Result>, response: Response<Result>) {
                             Log.d("order", response.isSuccessful.toString())
 
+                            val result = response.body()
+                            val data = result?.data
+
+                            var order_num = data?.order_id
+
+                            dbManager!!.deleteAllData()
+                            val intent = Intent(this@ShopBagActivity, Order_WaitingActivity::class.java)
+                            intent.putExtra("order_id", order_num)
+                            startActivity(intent)
+                            finish()
                         }
 
                         override fun onFailure(call: Call<Result?>, t: Throwable) {}
@@ -104,11 +113,6 @@ class ShopBagActivity : AppCompatActivity() {
                 } catch (e: Exception) {
                     throw RuntimeException(e)
                 }
-
-                dbManager!!.deleteAllData()
-                val intent = Intent(this@ShopBagActivity, Order_WaitingActivity::class.java)
-                startActivity(intent)
-                finish()
             }
         })
     }
@@ -150,5 +154,27 @@ class ShopBagActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onCntPlusClicked(position: Int) {
+        // RecyclerView Adapter에서 cnt_plus 버튼 클릭 시 액티비티에서 해야 할 작업 구현
+        // 예를 들어, 액티비티 재시작 등
+        val intent = intent
+        finish()
+        overridePendingTransition(0, 0)
+        startActivity(intent)
+        overridePendingTransition(0, 0)
+    }
+
+    override fun onCntMinusClicked(position: Int) {
+        val intent = intent
+        finish()
+        overridePendingTransition(0, 0)
+        startActivity(intent)
+        overridePendingTransition(0, 0)
+    }
+
+    override fun onDeleteClicked(position: Int) {
+        // 버튼 클릭에 대한 작업을 처리합니다.
     }
 }

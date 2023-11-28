@@ -3,7 +3,6 @@ package com.example.eatswuneekotlin.community
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.opengl.Visibility
 import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
@@ -18,7 +17,6 @@ import com.example.eatswuneekotlin.R
 import com.example.eatswuneekotlin.server.Result
 import com.example.eatswuneekotlin.server.chat.ChatActivity
 import com.example.eatswuneekotlin.server.chat.ChatListActivity
-import com.google.api.Distribution.BucketOptions.Linear
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

@@ -21,6 +21,10 @@ import androidx.core.app.ActivityCompat
 import com.example.eatswuneekotlin.MasterApplication
 import com.example.eatswuneekotlin.R
 import com.example.eatswuneekotlin.server.Result
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -32,18 +36,11 @@ import java.text.SimpleDateFormat
 
 
 class profile_editActivity : AppCompatActivity() {
-    private lateinit var logout: Button
-    private lateinit var withdrawal: Button
-    private lateinit var isDuplicated: Button
     private lateinit var camera_btn: ImageButton
-    private lateinit var user_id: TextView
+    private lateinit var user_id: EditText
     private lateinit var nickname: EditText
     private lateinit var profile: ImageView
 
-    private lateinit var mCurrentPhotoPath: String
-    private lateinit var imageURI: Uri
-    private lateinit var photoURI: Uri
-    private lateinit var albumURI: Uri
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,10 +57,6 @@ class profile_editActivity : AppCompatActivity() {
 
         init()
 
-        logout = findViewById(R.id.logout_btn)
-        withdrawal = findViewById(R.id.withdrawal_btn)
-        isDuplicated = findViewById(R.id.nick_duplicated)
-        isDuplicated.setOnClickListener(confirmOnClickListener())
         camera_btn = findViewById(R.id.camera_btn)
         camera_btn.setOnClickListener(CameraOnClickListener())
 
@@ -71,37 +64,6 @@ class profile_editActivity : AppCompatActivity() {
         nickname = findViewById(R.id.edit_nickname)
         profile = findViewById(R.id.edit_profile)
 
-        // 로그아웃, 회원탈퇴 버튼 밑줄 표현
-        logout.paintFlags = logout.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-        withdrawal.paintFlags = withdrawal.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-
-    }
-
-    private inner class confirmOnClickListener() : View.OnClickListener {
-        @SuppressLint("UseCheckPermission")
-        override fun onClick(view: View) {
-            val masterApp = MasterApplication()
-            masterApp.createRetrofit(this@profile_editActivity)
-
-            val service = masterApp.serviceApi
-
-            service.changeNickname(nickname.text.toString()).enqueue(object : Callback<Result> {
-                override fun onResponse(call: Call<Result>, response: Response<Result>) {
-                    val result = response.body()
-                    val data = result?.data
-                    if(!data!!.isIs_duplicated){
-                        Toast.makeText(this@profile_editActivity, "사용 가능한 닉네임입니다.", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(this@profile_editActivity, "이미 존재하는 닉네임입니다.", Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-                override fun onFailure(call: Call<Result>, t: Throwable) {
-                    Toast.makeText(this@profile_editActivity, "다시 시도해 주세요.", Toast.LENGTH_SHORT).show()
-                }
-
-            })
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -133,7 +95,7 @@ class profile_editActivity : AppCompatActivity() {
                 Log.d("user_profile", data.user_profile_url)
 
                 nickname!!.setText(data?.user_name)
-                user_id!!.text = data?.loginId
+                user_id!!.setText(data?.loginId)
                 DownloadFilesTask().execute(data?.user_profile_url)
             }
 
@@ -183,12 +145,28 @@ class profile_editActivity : AppCompatActivity() {
                         // 갤러리에 관한 권한을 받아오는 코드
                         getAlbum()
                     }
-                    /*
                     R.id.three -> {
                         // 올린 이미지 삭제
+                        val masterApp = MasterApplication()
+                        masterApp.createRetrofit(this@profile_editActivity)
 
+                        val service = masterApp.serviceApi
+
+                        service.deleteProfile().enqueue(object : Callback<Result> {
+                            override fun onResponse(
+                                call: Call<Result>,
+                                response: Response<Result>,
+                            ) {
+                                Toast.makeText(this@profile_editActivity, "저장되었습니다.", Toast.LENGTH_SHORT).show()
+                            }
+
+                            override fun onFailure(call: Call<Result>, t: Throwable) {
+                                t.printStackTrace()
+                            }
+
+                        })
                     }
-                     */
+
                 }
                 true
             }
@@ -314,6 +292,12 @@ class profile_editActivity : AppCompatActivity() {
         return this.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
     }
 
+    // 파일을 MultipartBody.Part로 변환하는 확장 함수
+    fun File.asMultipart(name: String): MultipartBody.Part {
+        val requestFile = this.asRequestBody("image/*".toMediaTypeOrNull())
+        return MultipartBody.Part.createFormData(name, this.name, requestFile)
+    }
+
     /** 카메라 및 앨범 Intent 결과
      * */
     @SuppressLint("RestrictedApi", "Range")
@@ -330,10 +314,12 @@ class profile_editActivity : AppCompatActivity() {
                 REQUEST_CAMERA -> {
                     realUri?.let { uri ->
                         // 서버 업로드를 위해 파일 형태로 변환
-                        var imageFile = File(getRealPathFromURI(uri))
-                        DownloadFilesTask().execute("file://$imageFile")
+                        val imageFile = File(getRealPathFromURI(uri))
 
-                        service.uploadProfile(imageFile).enqueue(object : Callback<Result>{
+                        // 위의 확장 함수를 사용하여 파일을 MultipartBody.Part로 변환
+                        val imagePart = imageFile.asMultipart("image")
+
+                        service.uploadProfile(imagePart).enqueue(object : Callback<Result>{
                             override fun onResponse(call: Call<Result>, response: Response<Result>) {
                                 val result = response.body()
                                 val data = result?.data
@@ -353,10 +339,12 @@ class profile_editActivity : AppCompatActivity() {
                 REQUEST_STORAGE -> {
                     data?.data?.let { uri ->
                         // 서버 업로드를 위해 파일 형태로 변환한다
-                        var imageFile = File(getRealPathFromURI(uri))
-                        DownloadFilesTask().execute("file://$imageFile")
+                        val imageFile = File(getRealPathFromURI(uri))
 
-                        service.uploadProfile(imageFile).enqueue(object : Callback<Result>{
+                        // 위의 확장 함수를 사용하여 파일을 MultipartBody.Part로 변환
+                        val imagePart = imageFile.asMultipart("image")
+
+                        service.uploadProfile(imagePart).enqueue(object : Callback<Result>{
                             override fun onResponse(call: Call<Result>, response: Response<Result>) {
                                 val result = response.body()
                                 val data = result?.data
