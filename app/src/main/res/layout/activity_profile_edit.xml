@@ -69,12 +69,13 @@
             app:passwordToggleEnabled="false">
 
             <EditText
-                android:id="@+id/edit_nickname"
+                android:id="@+id/edit_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/profile_stroke_background"
                 android:ems="10"
+                android:enabled="false"
                 android:inputType="textPersonName"
                 android:padding="13dp"
                 android:text="USER23"
@@ -82,14 +83,6 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:id="@+id/nick_duplicated"
-            android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/profile_background"
-            android:text="중복 확인"
-            android:textColor="#D75509" />
     </LinearLayout>
 
     <LinearLayout
@@ -106,145 +99,38 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="7.5"
-            app:passwordToggleEnabled="true">
-
-            <EditText
-                android:id="@+id/editTextTextPersonName3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/profile_stroke_background"
-                android:ems="10"
-                android:hint="현재 비밀번호"
-                android:inputType="textPassword"
-                android:paddingLeft="10dp"
-                android:textSize="14sp"
-                tools:textColorHint="#808E3B0B" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout9"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingLeft="30dp"
-        android:paddingRight="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView9"
-        app:layout_constraintVertical_bias="0.0">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginRight="8dp"
-            android:layout_weight="0.8"
-            app:passwordToggleEnabled="true">
+            android:layout_weight="1"
+            app:passwordToggleEnabled="false">
 
             <EditText
-                android:id="@+id/editTextTextPersonName4"
+                android:id="@+id/edit_nickname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/profile_stroke_background"
                 android:ems="10"
-                android:hint="새 비밀번호"
-                android:inputType="textPersonName|textPassword"
-                android:paddingLeft="10dp"
-                android:textColorHint="#808E3B0B"
+                android:enabled="false"
+                android:inputType="textPersonName"
+                android:padding="13dp"
+                android:text="USER23"
                 android:textSize="14sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
-
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="60dp"
-            android:layout_height="35dp"
-            android:background="@drawable/profile_background"
-            android:text="변경"
-            android:textColor="#D75509" />
-
     </LinearLayout>
-
-    <Button
-        android:id="@+id/withdrawal_btn"
-        android:layout_width="68dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="65dp"
-        android:background="#00ff0000"
-        android:text="회원탈퇴"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.2"
-        app:layout_constraintStart_toEndOf="@+id/logout_btn"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout9" />
-
-    <Button
-        android:id="@+id/logout_btn"
-        android:layout_width="68dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="65dp"
-        android:background="#00ff0000"
-        android:text="로그아웃"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.73"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout9" />
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
-        app:layout_constraintEnd_toStartOf="@+id/logout_btn"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout9"
-        app:srcCompat="@drawable/baseline_logout_24" />
-
-    <TextView
-        android:id="@+id/textView11"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="68dp"
-        android:text="|"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/withdrawal_btn"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/logout_btn"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout9" />
-
-    <TextView
-        android:id="@+id/edit_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_weight="7"
-        android:text="설정한 ID 표기"
-        android:textColor="#808E3B0B"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_profile" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="32dp"
         android:layout_weight="5"
-        android:text="닉네임"
+        android:text="로그인 ID"
         android:textColor="#45210D"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_id" />
+        tools:layout_editor_absoluteY="261dp" />
 
     <TextView
         android:id="@+id/textView6"
@@ -253,24 +139,11 @@
         android:layout_marginTop="16dp"
         android:layout_weight="1"
         android:paddingLeft="30dp"
-        android:text="현재 비밀번호"
+        android:text="닉네임"
         android:textColor="#45210D"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout7" />
-
-    <TextView
-        android:id="@+id/textView9"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_weight="2"
-        android:paddingLeft="30dp"
-        android:text="새 비밀번호"
-        android:textColor="#45210D"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout8" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

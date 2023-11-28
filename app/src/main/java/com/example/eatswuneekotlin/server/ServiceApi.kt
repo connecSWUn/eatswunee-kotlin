@@ -6,9 +6,11 @@ import com.example.eatswuneekotlin.community.article_edit
 import com.example.eatswuneekotlin.community.article_status
 import com.example.eatswuneekotlin.mypage.review_content
 import com.example.eatswuneekotlin.server.login.UserModel
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.*
-import java.io.File
+import javax.annotation.Nullable
 
 interface ServiceApi {
     /* Get 방식 - @GET(URI) */
@@ -44,8 +46,13 @@ interface ServiceApi {
     fun getProfile(): Call<Result>
 
     /* 프로필 이미지 업로드 */
-    @POST("/user/profile")
-    fun uploadProfile(@Body image: File): Call<Result>
+    @Multipart
+    @POST("/user/profile/false")
+    fun uploadProfile(@Part image: MultipartBody.Part): Call<Result>
+
+
+    @POST("/user/profile/default")
+    fun deleteProfile(): Call<Result>
 
     /* 닉네임 중복 확인 */
     @GET("/mypage/duplicated/{nickname}")
@@ -120,6 +127,10 @@ interface ServiceApi {
     /* 주문 */
     @POST("/gusia/order/save")
     fun postOrder(@Body orderMenus: orderMenus): Call<Result>
+
+    /* 주문 내역 조회 */
+    @GET("/order/{orderId}")
+    fun getOrderContext(@Path("orderId") orderId: Long): Call<Result>
 
     @POST("/recruit/save")
     fun postArticle(@Body article: article): Call<Result>

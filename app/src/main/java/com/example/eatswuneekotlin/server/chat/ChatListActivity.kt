@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.example.eatswuneekotlin.MasterApplication
 import com.example.eatswuneekotlin.R
 import com.example.eatswuneekotlin.server.Result
-import com.example.eatswuneekotlin.server.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -33,11 +32,12 @@ class ChatListActivity : AppCompatActivity() {
         actionBar.setDisplayShowCustomEnabled(true)
         actionBar.setDisplayHomeAsUpEnabled(true)
         actionBar.setHomeAsUpIndicator(R.drawable.baseline_arrow_back_ios_new_24)
+
         init()
 
         // RecyclerView
         mRecyclerView = findViewById<View>(R.id.chat_list_recyclerView) as RecyclerView
-        //mRecyclerView.addItemDecoration(new RecyclerViewDecoration(50));
+        // mRecyclerView.addItemDecoration(new RecyclerViewDecoration(50));
 
         /* initiate recyclerView */
         mRecyclerView!!.layoutManager = LinearLayoutManager(this)

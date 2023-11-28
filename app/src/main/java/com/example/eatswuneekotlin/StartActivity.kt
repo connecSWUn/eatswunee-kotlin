@@ -2,32 +2,37 @@ package com.example.eatswuneekotlin
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import com.example.eatswuneekotlin.server.login.Utils
 
 class StartActivity : AppCompatActivity() {
 
-    lateinit var login: Button
-    lateinit var register: Button
+    private lateinit var login: Button
+    private lateinit var join: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start)
 
-        login = findViewById(R.id.start_login_btn)
-        register = findViewById(R.id.start_register_btn)
+        Utils.init(applicationContext)
 
-        login.setOnClickListener(View.OnClickListener {
+        val masterApp = MasterApplication()
+        masterApp.createRetrofit(this@StartActivity)
+
+        login = findViewById(R.id.start_login_btn)
+        join = findViewById(R.id.start_register_button)
+
+        login.setOnClickListener {
             val intent = Intent(this@StartActivity, LoginActivity::class.java)
             startActivity(intent)
             finish()
-        })
+        }
 
-        register.setOnClickListener(View.OnClickListener {
+        join.setOnClickListener {
             val intent = Intent(this@StartActivity, RegisterActivity::class.java)
             startActivity(intent)
             finish()
-        })
+        }
     }
 }

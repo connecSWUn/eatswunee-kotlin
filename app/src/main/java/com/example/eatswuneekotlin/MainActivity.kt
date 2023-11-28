@@ -21,16 +21,14 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import com.example.eatswuneekotlin.*
 import com.example.eatswuneekotlin.community.articlesActivity
 import com.example.eatswuneekotlin.server.Result
 import com.example.eatswuneekotlin.server.chat.ChatListActivity
 import com.example.eatswuneekotlin.server.chat.MyFirebaseMessagingService
-import com.google.android.gms.tasks.OnCompleteListener
+import com.example.eatswuneekotlin.server.login.Utils
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.FirebaseApp
-import com.google.firebase.messaging.FirebaseMessaging
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -188,6 +186,7 @@ class MainActivity : AppCompatActivity() {
     private fun init() {
         val masterApp = MasterApplication()
         masterApp.createRetrofit(this@MainActivity)
+
         val service = masterApp.serviceApi
 
         service.getProfile().enqueue(object : Callback<Result> {

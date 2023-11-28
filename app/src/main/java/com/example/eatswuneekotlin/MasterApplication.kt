@@ -3,12 +3,14 @@ package com.example.eatswuneekotlin
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import com.example.eatswuneekotlin.server.ServiceApi
 import com.example.eatswuneekotlin.server.login.AuthInterceptor
 import com.example.eatswuneekotlin.server.login.TokenRefreshApi
 import com.example.eatswuneekotlin.server.login.Utils
 import com.facebook.stetho.Stetho
+import com.google.gson.GsonBuilder
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -18,14 +20,14 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 class MasterApplication : Application() {
     lateinit var serviceApi: ServiceApi
     private val baseUrl = "http://43.201.201.163:8080"
-    private lateinit var activity : Activity
+    private lateinit var activity : Context
 
     override fun onCreate() {
         super.onCreate()
         Stetho.initializeWithDefaults(this)
     }
 
-    fun createRetrofit(currentActivity: Activity) {
+    fun createRetrofit(currentActivity: Context) {
         activity = currentActivity
 
         val header = Interceptor {

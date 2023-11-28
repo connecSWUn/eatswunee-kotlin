@@ -18,7 +18,6 @@ import com.example.eatswuneekotlin.R
 import com.example.eatswuneekotlin.server.Result
 import com.example.eatswuneekotlin.server.messages
 import okhttp3.*
-
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
@@ -26,15 +25,17 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 
+
 class ChatActivity : AppCompatActivity() {
 
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var adapter: chatAdapter
     private lateinit var client: OkHttpClient
-    private lateinit var ws: WebSocket
+    private lateinit var websocket: WebSocket
 
     var chatRoomId: Long = 0
     private var user_id: Long = 0
+    private lateinit var user_name: String
     private lateinit var messageType: String
     private var isSend = 0
 
@@ -59,13 +60,6 @@ class ChatActivity : AppCompatActivity() {
         val service = masterApp.serviceApi
 
         client = OkHttpClient()
-
-        //val request: Request = OkHttpClient.Builder()
-        //    .url("ws://43.201.201.163:8080/ws/chat")
-        //    .build()
-
-        val listener = WebSocketListener()
-        //ws = client!!.newWebSocket(request, listener)
 
         val toolbar = findViewById<View>(R.id.chat_toolbar) as Toolbar
         setSupportActionBar(toolbar)
@@ -92,17 +86,112 @@ class ChatActivity : AppCompatActivity() {
         mRecyclerView = findViewById<View>(R.id.recyclerView) as RecyclerView
         mRecyclerView.addItemDecoration(RecyclerViewDecoration(50))
         sendBtn.setOnClickListener(sendOnClickListener())
-        
+
         service.getProfile().enqueue(object : Callback<Result?> {
             override fun onResponse(call: Call<Result?>, response: Response<Result?>) {
                 val result = response.body()
                 val data = result?.data
                 user_id = data!!.user_id
+                user_name = data!!.user_name
             }
 
             override fun onFailure(call: Call<Result?>, t: Throwable) {}
         })
         init(chatRoomId)
+
+        val request = Request.Builder()
+            .url("ws://43.201.201.163:8080/ws/chat")
+            .build()
+
+        val listener = object : WebSocketListener() {
+
+            private val NORMAL_CLOSURE_STATUS = 1000
+
+            override fun onOpen(webSocket: WebSocket, response: okhttp3.Response) {
+                // 웹소켓 연결이 성공적으로 열림
+                Log.d("WebSocketConnection", "Open Successfully")
+            }
+
+            override fun onMessage(webSocket: WebSocket, text: String) {
+                super.onMessage(webSocket, text)
+                Log.d("onMessage", text)
+
+                runOnUiThread {
+                    // 수신된 JSON 문자열을 파싱하여 JSON 객체로 변환
+                    val jsonObject = JSONObject(text)
+
+                    // JSON 객체에서 필요한 필드 추출
+                    val type = jsonObject.optString("type")
+                    val userObject = jsonObject.optJSONObject("user")
+                    val userName = userObject?.optString("name")
+                    val message = jsonObject.optString("message")
+
+                    if(type != "ENTER")
+                    {
+                        if(userName != user_name) {
+                            val cal = Calendar.getInstance()
+                            var year = cal[Calendar.YEAR].toString()
+                            var month = (cal[Calendar.MONTH] + 1).toString()
+                            var day = cal[Calendar.DAY_OF_MONTH].toString()
+                            var hour = cal[Calendar.HOUR].toString()
+                            var minute = cal[Calendar.MINUTE].toString()
+                            var second = cal[Calendar.SECOND].toString()
+                            if (cal[Calendar.YEAR] < 10) {
+                                year = "0" + cal[Calendar.YEAR]
+                            }
+                            if (cal[Calendar.MONTH] + 1 < 10) {
+                                month = "0" + (cal[Calendar.MONTH] + 1)
+                            }
+                            if (cal[Calendar.DAY_OF_MONTH] < 10) {
+                                day = "0" + cal[Calendar.DAY_OF_MONTH]
+                            }
+                            if (cal[Calendar.HOUR] < 10) {
+                                hour = "0" + cal[Calendar.HOUR]
+                            }
+                            if (cal[Calendar.MINUTE] < 10) {
+                                minute = "0" + cal[Calendar.MINUTE]
+                            }
+                            if (cal[Calendar.SECOND] < 10) {
+                                second = "0" + cal[Calendar.SECOND]
+                            }
+                            val created_at = (year + "." + month + "." + day + " " + hour + ":"
+                                    + minute + ":" + second)
+                            val messages = userName?.let { messages(created_at, it, message, true) }
+                            if (messages != null) {
+                                adapter.addChat(messages)
+                            }
+                            mRecyclerView.scrollToPosition(adapter.itemCount - 1)
+                        }
+                    }
+                }
+            }
+
+            override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+                super.onClosing(webSocket, code, reason)
+                webSocket.close(NORMAL_CLOSURE_STATUS, null)
+                webSocket.cancel()
+                Log.d("WebSocketConnection", "WebSocket is closing. Closing : $code, Reason : $reason")
+            }
+
+            override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+                super.onClosed(webSocket, code, reason)
+                // 연결이 완전히 종료된 후에 호출됩니다.
+                Log.d("WebSocketConnection", "WebSocket closed. Code : $code, Reason : $reason")
+            }
+
+            override fun onMessage(webSocket: WebSocket, bytes: okio.ByteString) {
+                super.onMessage(webSocket, bytes)
+                Log.d("onMessage", "ByteString 데이터 확인 : $bytes")
+            }
+
+            override fun onFailure(webSocket: WebSocket, t: Throwable, response: okhttp3.Response?) {
+                super.onFailure(webSocket, t, response)
+                Log.d("WebSocketConnection", "Error : " + t.message)
+            }
+        }
+
+        val client = OkHttpClientSingleton.instance
+        websocket = client.newWebSocket(request, listener)
 
         /* initiate recyclerView */
         mRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -122,84 +211,38 @@ class ChatActivity : AppCompatActivity() {
 
                 title.text = data.recruit_title
                 date.text = data.recruit_created_at
-                spot.text = data.recruit_spot
-                time.text = data.recruit_start_time + "-" + data.recruit_end_time
-                status.text = data.recruit_status
+                time.text = data.recruit_start_time + " - " + data.recruit_end_time
                 nickname.text = data.sender_name
                 start_message.text = data.sender_name + "님과의 대화를 시작합니다."
 
-                if (data.recruit_status === "ONGOING") {
+                when (data.recruit_spot) {
+                    "gusia" -> { spot.text = "구시아" }
+                    "shalom" -> { spot.text = "샬롬" }
+                    "nuri" -> { spot.text = "누리관" }
+                    "fiftieth" -> { spot.text = "50주년" }
+                    "gyo" -> { spot.text = "교직원" }
+                }
+
+                if (data.recruitStatus === "ONGOING") {
                     status.text = "찾는 중..."
                     status.setBackgroundResource(R.drawable.community_state_finding)
-                } else if (data.recruit_status === "CONNECTING") {
+                } else if (data.recruitStatus === "CONNECTING") {
                     status.text = "연락 중..."
                     status.setBackgroundResource(R.drawable.community_state_talking)
-                } else if (data.recruit_status === "COMPLETED") {
+                } else if (data.recruitStatus === "COMPLETED") {
                     status.text = "구했어요!"
                     status.setBackgroundResource(R.drawable.community_state_done)
                 }
 
                 /* initiate adapter */
                 adapter =
-                    chatAdapter(data.sender_name, data.messagesList, applicationContext)
+                    chatAdapter(data.sender_name, data.messagesList.toMutableList(), applicationContext)
                 mRecyclerView.adapter = adapter
                 mRecyclerView.scrollToPosition(adapter.itemCount - 1)
             }
 
             override fun onFailure(call: Call<Result?>, t: Throwable) {}
         })
-    }
-
-    private inner class WebSocketListener : okhttp3.WebSocketListener() {
-
-        private val NORMAL_CLOSURE_STATUS = 1000
-
-        override fun onMessage(webSocket: WebSocket, text: String) {
-            super.onMessage(webSocket, text)
-            Log.d("message", text)
-            val cal = Calendar.getInstance()
-            var year = cal[Calendar.YEAR].toString()
-            var month = (cal[Calendar.MONTH] + 1).toString()
-            var day = cal[Calendar.DAY_OF_MONTH].toString()
-            var hour = cal[Calendar.HOUR].toString()
-            var minute = cal[Calendar.MINUTE].toString()
-            var second = cal[Calendar.SECOND].toString()
-            if (cal[Calendar.YEAR] < 10) {
-                year = "0" + cal[Calendar.YEAR]
-            }
-            if (cal[Calendar.MONTH] + 1 < 10) {
-                month = "0" + (cal[Calendar.MONTH] + 1)
-            }
-            if (cal[Calendar.DAY_OF_MONTH] < 10) {
-                day = "0" + cal[Calendar.DAY_OF_MONTH]
-            }
-            if (cal[Calendar.HOUR] < 10) {
-                hour = "0" + cal[Calendar.HOUR]
-            }
-            if (cal[Calendar.MINUTE] < 10) {
-                minute = "0" + cal[Calendar.MINUTE]
-            }
-            if (cal[Calendar.SECOND] < 10) {
-                second = "0" + cal[Calendar.SECOND]
-            }
-            val created_at = (year + "." + month + "." + day + " " + hour + ":"
-                    + minute + ":" + second)
-            val messages = messages(created_at, "sender", text, true)
-            adapter.addChat(messages)
-            mRecyclerView.scrollToPosition(adapter.itemCount - 1)
-        }
-
-        override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-            super.onClosing(webSocket, code, reason)
-            webSocket.close(NORMAL_CLOSURE_STATUS, null)
-            webSocket.cancel()
-            Log.d("WebSocketConnection", "Closing : $code / $reason")
-        }
-
-        override fun onFailure(webSocket: WebSocket, t: Throwable, response: okhttp3.Response?) {
-            super.onFailure(webSocket, t, response)
-            Log.d("WebSocketConnection", "Error : " + t.message)
-        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -218,7 +261,7 @@ class ChatActivity : AppCompatActivity() {
             outRect: Rect,
             view: View,
             parent: RecyclerView,
-            state: RecyclerView.State
+            state: RecyclerView.State,
         ) {
             super.getItemOffsets(outRect, view, parent, state)
             outRect.top = divHeight
@@ -235,7 +278,9 @@ class ChatActivity : AppCompatActivity() {
                     `object`.put("senderId", java.lang.Long.valueOf(user_id))
                     `object`.put("message", message.text)
                     Log.d("chat", `object`.toString())
-                    ws.send(`object`.toString())
+
+                    websocket.send(`object`.toString())
+
                     val cal = Calendar.getInstance()
                     var year = cal[Calendar.YEAR].toString()
                     var month = (cal[Calendar.MONTH] + 1).toString()
@@ -261,16 +306,20 @@ class ChatActivity : AppCompatActivity() {
                     if (cal[Calendar.SECOND] < 10) {
                         second = "0" + cal[Calendar.SECOND]
                     }
+
                     val created_at = (year + "." + month + "." + day + " " + hour + ":"
                             + minute + ":" + second)
-                    val messages = messages(created_at, "sender", message.text.toString(), false)
+                    val messages = messages(created_at, user_name, message.text.toString(), false)
+
                     adapter.addChat(messages)
                     mRecyclerView.scrollToPosition(adapter.itemCount - 1)
                     message.setText("")
                     isSend++
+
                 } catch (e: JSONException) {
                     throw RuntimeException(e)
                 }
+
             } else {
                 val `object` = JSONObject()
                 try {
@@ -279,7 +328,8 @@ class ChatActivity : AppCompatActivity() {
                     `object`.put("senderId", java.lang.Long.valueOf(user_id))
                     `object`.put("message", message.text)
                     Log.d("chat", `object`.toString())
-                    ws.send(`object`.toString())
+                    websocket.send(`object`.toString())
+
                     val cal = Calendar.getInstance()
                     var year = cal[Calendar.YEAR].toString()
                     var month = (cal[Calendar.MONTH] + 1).toString()
@@ -305,12 +355,15 @@ class ChatActivity : AppCompatActivity() {
                     if (cal[Calendar.SECOND] < 10) {
                         second = "0" + cal[Calendar.SECOND]
                     }
+
                     val created_at = (year + "." + month + "." + day + " " + hour + ":"
                             + minute + ":" + second)
-                    val messages = messages(created_at, "sender", message.text.toString(), false)
+                    val messages = messages(created_at, user_name, message.text.toString(), false)
+
                     adapter.addChat(messages)
                     mRecyclerView.scrollToPosition(adapter.itemCount - 1)
                     message.setText("")
+
                 } catch (e: JSONException) {
                     throw RuntimeException(e)
                 }

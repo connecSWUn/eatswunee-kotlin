@@ -14,8 +14,6 @@ import com.example.eatswuneekotlin.R
 import com.example.eatswuneekotlin.bistro.recyclerView.MyBistroAdapter
 import com.example.eatswuneekotlin.bistro.recyclerView.MyViewPagerAdapter
 import com.example.eatswuneekotlin.server.Result
-import com.example.eatswuneekotlin.server.RetrofitClient
-import com.example.eatswuneekotlin.server.ServiceApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

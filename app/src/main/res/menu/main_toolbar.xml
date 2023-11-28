@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
     <item
-        android:id="@+id/menu_notification"
-        android:title="notification"
-        android:icon="@drawable/baseline_notifications_24"
-        app:showAsAction="always"
-        />
-    <item
         android:id="@+id/menu_shopping_bag"
         android:title="shopping_bag"
         android:icon="@drawable/baseline_shopping_cart_24"

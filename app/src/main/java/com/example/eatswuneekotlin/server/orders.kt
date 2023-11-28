@@ -11,5 +11,11 @@ data class orders (
     @SerializedName("menuTotalPrice") val menuTotalPrice: Int,
     @SerializedName("menuPrice") val menuPrice: Int,
     @SerializedName("menuCnt") val menuCnt: Int,
-    @SerializedName("userWriteReview") val isUserWriteReview: Boolean
+    @SerializedName("userWriteReview") val isUserWriteReview: Boolean,
+
+    /* 주문 목록 조회 */
+    @SerializedName("restaurant_name") val restaurant_name: String,
+    @SerializedName("order_restaurant_waiting_time") val order_restaurant_waiting_time: Int,
+    @SerializedName("restaurant_total_price") val restaurant_total_price: Int,
+    @SerializedName("menus") val menusList: List<menus>,
 )

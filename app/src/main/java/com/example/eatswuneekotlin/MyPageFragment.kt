@@ -20,7 +20,6 @@ import com.example.eatswuneekotlin.mypage.order_listActivity
 import com.example.eatswuneekotlin.mypage.profile_editActivity
 import com.example.eatswuneekotlin.mypage.settingActivity
 import com.example.eatswuneekotlin.server.Result
-import com.example.eatswuneekotlin.MainActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

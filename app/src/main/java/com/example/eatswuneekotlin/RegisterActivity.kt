@@ -12,8 +12,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.eatswuneekotlin.server.AccountRegisterDto
 import com.example.eatswuneekotlin.server.Result
-import com.example.eatswuneekotlin.server.RetrofitClient
-import com.example.eatswuneekotlin.server.ServiceApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -29,8 +27,6 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var is_nickname_duplicated: Button
     private lateinit var registerBtn: Button
     private lateinit var loginBtn: Button
-
-    private lateinit var retrofitClient: RetrofitClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,10 +55,10 @@ class RegisterActivity : AppCompatActivity() {
         })
 
         registerBtn.setOnClickListener(View.OnClickListener {
-            if (is_id_duplicated.text.toString() === "중복확인") {
+            if (is_id_duplicated.text.toString() == "중복확인") {
                 Toast.makeText(this@RegisterActivity, "아이디 중복확인을 해 주세요.", Toast.LENGTH_SHORT).show()
                 return@OnClickListener
-            } else if (is_nickname_duplicated.text.toString() === "중복확인") {
+            } else if (is_nickname_duplicated.text.toString() == "중복확인") {
                 Toast.makeText(this@RegisterActivity, "닉네임 중복확인을 해 주세요.", Toast.LENGTH_SHORT).show()
                 return@OnClickListener
             } else if (TextUtils.isEmpty(passwordInput.text.toString())) {
