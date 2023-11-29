@@ -76,7 +76,7 @@ interface ServiceApi {
 
     /* 채팅방 입장 */
     @GET("/chat/enter/{chatRoomId}")
-    fun enterChat(@Path("chatRoomId") chatRoomId: Long): Call<Result>
+    fun enterChat(@Path("chatRoomId") chatRoomId: String): Call<Result>
 
     /* 채팅방 만들기 */
     @GET("/chat/create/{recruitId}")

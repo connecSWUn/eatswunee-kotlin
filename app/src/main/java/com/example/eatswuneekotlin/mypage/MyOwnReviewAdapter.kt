@@ -28,8 +28,6 @@ import java.net.URL
 class MyOwnReviewAdapter(private val reviewsList: List<reviews>) :
     RecyclerView.Adapter<MyOwnReviewAdapter.ViewHolder>() {
 
-    var review_photo: ImageView? = null
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_my_review_photo, parent, false)
@@ -38,21 +36,6 @@ class MyOwnReviewAdapter(private val reviewsList: List<reviews>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = reviewsList[position]
-        /*
-        val masterApp = MasterApplication()
-        masterApp.createRetrofit(activity)
-
-        val service = masterApp.serviceApi
-        */
-
-        holder.deleteBtn.setOnClickListener {
-            /*
-            service.reviewDelete(item.reviewId).enqueue(object : Callback<Result?> {
-                override fun onResponse(call: Call<Result?>, response: Response<Result?>) {}
-                override fun onFailure(call: Call<Result?>, t: Throwable) {}
-            })
-             */
-        }
         holder.setItem(item)
     }
 

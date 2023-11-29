@@ -61,18 +61,16 @@ class Phoini_BistroFragment : Fragment() {
                 val result = response.body()
                 val data = result!!.data
 
-                if (data.homeOrdersList == null) {
-                    viewPager!!.visibility = View.GONE
+                if (data?.homeOrdersList == null || data.homeOrdersList.isEmpty()) {
+                    viewPager.visibility = View.GONE
                 } else {
-
-                    viewPagerAdapter = MyViewPagerAdapter(data.homeOrdersList!!)
-                    viewPager!!.adapter = viewPagerAdapter
-                    viewPager!!.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-
+                    viewPagerAdapter = MyViewPagerAdapter(data.homeOrdersList)
+                    viewPager.adapter = viewPagerAdapter
+                    viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
                 }
 
                 bistroAdapter = MyBistroAdapter(data.menusList!!)
-                mRecyclerView!!.adapter = bistroAdapter
+                mRecyclerView.adapter = bistroAdapter
             }
 
             override fun onFailure(call: Call<Result>, t: Throwable) {
