@@ -39,7 +39,6 @@ class total_bistroFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_total_bistro, container, false)
         init(0)
 
@@ -63,18 +62,16 @@ class total_bistroFragment : Fragment() {
                 val result = response.body()
                 val data = result!!.data
 
-                if (data?.homeOrdersList == null) {
-                    viewPager!!.visibility = View.GONE
+                if (data?.homeOrdersList == null || data.homeOrdersList.isEmpty()) {
+                    viewPager.visibility = View.GONE
                 } else {
-
-                    viewPagerAdapter = MyViewPagerAdapter(data?.homeOrdersList!!)
-                    viewPager!!.adapter = viewPagerAdapter
-                    viewPager!!.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-
+                    viewPagerAdapter = MyViewPagerAdapter(data.homeOrdersList)
+                    viewPager.adapter = viewPagerAdapter
+                    viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
                 }
 
-                bistroAdapter = MyBistroAdapter(data?.menusList!!)
-                mRecyclerView!!.adapter = bistroAdapter
+                bistroAdapter = MyBistroAdapter(data.menusList!!)
+                mRecyclerView.adapter = bistroAdapter
             }
 
             override fun onFailure(call: Call<Result>, t: Throwable) {

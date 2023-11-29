@@ -33,7 +33,7 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var client: OkHttpClient
     private lateinit var websocket: WebSocket
 
-    var chatRoomId: Long = 0
+    private lateinit var chatRoomId: String
     private var user_id: Long = 0
     private lateinit var user_name: String
     private lateinit var messageType: String
@@ -80,7 +80,7 @@ class ChatActivity : AppCompatActivity() {
         sendBtn = findViewById(R.id.send_btn)
 
         val intent = intent
-        chatRoomId = intent.extras!!.getLong("chatRoomId")
+        chatRoomId = intent.extras!!.getString("chatRoomId").toString()
 
         // RecyclerView
         mRecyclerView = findViewById<View>(R.id.recyclerView) as RecyclerView
@@ -160,6 +160,7 @@ class ChatActivity : AppCompatActivity() {
                             if (messages != null) {
                                 adapter.addChat(messages)
                             }
+
                             mRecyclerView.scrollToPosition(adapter.itemCount - 1)
                         }
                     }
@@ -198,7 +199,7 @@ class ChatActivity : AppCompatActivity() {
         mRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
     }
 
-    private fun init(chatRoomId: Long) {
+    private fun init(chatRoomId: String) {
         val masterApp = MasterApplication()
         masterApp.createRetrofit(this@ChatActivity)
 

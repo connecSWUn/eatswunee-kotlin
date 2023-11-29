@@ -82,7 +82,7 @@ data class Data (
     @SerializedName("messages") val messagesList: List<messages>,
 
     /* 채팅방 만들기 */
-    @SerializedName("chat_room_id") val chat_room_id: Long,
+    @SerializedName("chat_room_id") val chat_room_id: String,
 
     /* 채팅방 리스트 */
     @SerializedName("chatRooms") val chatRoomsList: List<chatRooms>,
